@@ -1,0 +1,13 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{A941D7DF-4544-299C-E047-FEB2A2321B32}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "Entropy",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
