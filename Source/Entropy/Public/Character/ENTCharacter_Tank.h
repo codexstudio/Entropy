@@ -14,7 +14,8 @@ class ENTROPY_API AENTCharacter_Tank : public AENTCharacter
 {
 	GENERATED_BODY()
 
-		AENTCharacter_Tank();
+public:
+	AENTCharacter_Tank();
 	
 protected:
 	// Called when the game starts or when spawned
