@@ -2,9 +2,6 @@
 
 #include "ENTCharacter_Tank.h"
 
-
-
-
 AENTCharacter_Tank::AENTCharacter_Tank()
 {
 	

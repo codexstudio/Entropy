@@ -4,24 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "Character/ENTCharacter.h"
-#include "ENTCharacter_ADC.generated.h"
+#include "ENTCharacter_Assassin.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ENTROPY_API AENTCharacter_ADC : public AENTCharacter
+class ENTROPY_API AENTCharacter_Assassin : public AENTCharacter
 {
 	GENERATED_BODY()
-		
-public:
-	AENTCharacter_ADC();
 	
+public:
+	AENTCharacter_Assassin();
+
 	virtual void Tick(float DeltaTime) override;
 
-	FORCEINLINE virtual ENTCharacterClass GetCharacterClass() const override { return ENTCharacterClass::ADC; }
+	FORCEINLINE virtual ENTCharacterClass GetCharacterClass() const override { return ENTCharacterClass::Assassin; }
 
 protected:
 	virtual void BeginPlay() override;
-
+	
+	
+	
 };

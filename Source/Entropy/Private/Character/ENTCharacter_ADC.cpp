@@ -7,12 +7,12 @@ AENTCharacter_ADC::AENTCharacter_ADC()
 
 }
 
-void AENTCharacter_ADC::Tick(float DeltaTime)
+void AENTCharacter_ADC::BeginPlay()
 {
 
 }
 
-void AENTCharacter_ADC::BeginPlay()
+void AENTCharacter_ADC::Tick(float DeltaTime)
 {
 
 }
