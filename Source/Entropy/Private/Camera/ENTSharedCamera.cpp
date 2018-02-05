@@ -4,6 +4,7 @@
 #include "Camera/CameraComponent.h"
 #include "EngineUtils.h"
 #include "ENTCharacter.h"
+#include "GameFramework/SpringArmComponent.h"
 
 
 // Sets default values
@@ -12,7 +13,14 @@ AENTSharedCamera::AENTSharedCamera()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
+	RootComp = CreateDefaultSubobject<USceneComponent>("Root");
+	RootComponent = RootComp;
+
+	CameraBoomComp = CreateDefaultSubobject<USpringArmComponent>("Camera Boom");
+	CameraBoomComp->SetupAttachment(RootComp);
+
+	CameraComp = CreateDefaultSubobject<UCameraComponent>("Camera");
+	CameraComp->SetupAttachment(CameraBoomComp, USpringArmComponent::SocketName);
 }
 
 // Called when the game starts or when spawned
@@ -25,7 +33,7 @@ void AENTSharedCamera::BeginPlay()
 	}
 }
 
-void AENTSharedCamera::CalcCameraPosition()
+FVector AENTSharedCamera::CalcCameraPosition()
 {
 	FVector CameraLoc;
 	for (const AActor* Player : Players)
@@ -34,8 +42,7 @@ void AENTSharedCamera::CalcCameraPosition()
 	}
 	
 	CameraLoc /= Players.Num();
-	CameraLoc.Z = CameraHeight;
-	SetActorLocation(CameraLoc);
+	return CameraLoc;
 }
 
 // Called every frame
@@ -43,5 +50,5 @@ void AENTSharedCamera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	SetActorLocation(CalcCameraPosition());
 }
-

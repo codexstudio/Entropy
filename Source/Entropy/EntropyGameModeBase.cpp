@@ -2,8 +2,14 @@
 
 #include "EntropyGameModeBase.h"
 #include "Entropy.h"
+#include "ENTSharedCamera.h"
 
 void AEntropyGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AEntropyGameModeBase::SetSharedCamera(AENTSharedCamera* InSharedCamera)
+{
+	SharedCamera = InSharedCamera;
 }

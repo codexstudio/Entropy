@@ -14,11 +14,13 @@ class ENTROPY_API AENTPlayerCameraManager : public APlayerCameraManager
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void UpdateCamera(float DeltaTime) override;
+
 protected:
 	virtual void BeginPlay() override;
-
 	virtual void UpdateViewTarget(FTViewTarget& OutVT, float DeltaTime) override;
 
 protected:
-	class UCameraComponent* SharedCamera;
+	class AENTSharedCamera* SharedCamera;
 };
