@@ -9,6 +9,7 @@
 /**
  * 
  */
+
 UCLASS(abstract)
 class ENTROPY_API AENTPlayerController : public APlayerController
 {
