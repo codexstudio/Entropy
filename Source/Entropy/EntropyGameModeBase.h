@@ -14,16 +14,7 @@ class ENTROPY_API AEntropyGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
-public:
-	UFUNCTION(BlueprintCallable, Category = "Entropy Game")
-	void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass);
-
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Entropy Game")
-	TSubclassOf<UUserWidget> StartingWidgetClass;
-
-	UPROPERTY()
-	UUserWidget* CurrentWidget;
 };

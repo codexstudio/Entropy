@@ -2,10 +2,11 @@
 
 #include "ENTPlayerController.h"
 #include "ENTCharacter.h"
+#include "ENTPlayerCameraManager.h"
 
 AENTPlayerController::AENTPlayerController()
 {
-
+	PlayerCameraManagerClass = AENTPlayerCameraManager::StaticClass();
 }
 
 void AENTPlayerController::Possess(APawn* aPawn)
@@ -20,11 +21,13 @@ void AENTPlayerController::Possess(APawn* aPawn)
 
 void AENTPlayerController::Tick(float DeltaTime)
 {
-
+	Super::Tick(DeltaTime);
 }
 
 void AENTPlayerController::SetupInputComponent()
 {
+	Super::SetupInputComponent();
+
 	// Twin stick shooter
 	InputComponent->BindAxis("MoveUp", this, &ThisClass::MoveUp);
 	InputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
@@ -34,7 +37,7 @@ void AENTPlayerController::SetupInputComponent()
 
 void AENTPlayerController::BeginPlay()
 {
-
+	Super::BeginPlay();
 }
 
 void AENTPlayerController::MoveUp(float AxisValue)
