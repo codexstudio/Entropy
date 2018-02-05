@@ -26,6 +26,7 @@ public:
 
 	virtual ENTCharacterClass GetCharacterClass() const PURE_VIRTUAL(AENTCharacter::GetCharacterClass, return ENTCharacterClass::NONE; );
 
+
 	FORCEINLINE int GetCurrentHealth() { return CurrHealth; }
 	FORCEINLINE int GetStartHealth() { return StartHealth; }
 	FORCEINLINE float GetCurrentMovementSpeed() { return CurrMovementSpeed; }
