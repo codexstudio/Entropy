@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-/*
 #include "EntropyGameModeBase.h"
 #include "Entropy.h"
+#include "UserWidget.h"
 
 void AEntropyGameModeBase::BeginPlay()
 {
@@ -26,4 +26,3 @@ void AEntropyGameModeBase::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetCl
 		}
 	}
 }
-*/
