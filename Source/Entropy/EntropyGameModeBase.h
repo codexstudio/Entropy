@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-/*
+
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
 #include "GameFramework/GameModeBase.h"
 #include "EntropyGameModeBase.generated.h"
 
+class UUserWidget;
 
 UCLASS()
 class ENTROPY_API AEntropyGameModeBase : public AGameModeBase
@@ -16,15 +16,14 @@ class ENTROPY_API AEntropyGameModeBase : public AGameModeBase
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Entropy Game")
-		void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass);
+	void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass);
 
 protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Entropy Game")
-		TSubclassOf<UUserWidget> StartingWidgetClass;
+	TSubclassOf<UUserWidget> StartingWidgetClass;
 
 	UPROPERTY()
-		UUserWidget* CurrentWidget;
+	UUserWidget* CurrentWidget;
 };
-*/
