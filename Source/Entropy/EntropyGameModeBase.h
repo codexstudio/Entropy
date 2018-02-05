@@ -7,7 +7,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "EntropyGameModeBase.generated.h"
 
-class UUserWidget;
+class AENTSharedCamera;
 
 UCLASS()
 class ENTROPY_API AEntropyGameModeBase : public AGameModeBase
@@ -15,15 +15,18 @@ class ENTROPY_API AEntropyGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Entropy Game")
-	void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass);
+	FORCEINLINE AENTSharedCamera* GetSharedCamera() { return SharedCamera; }
+
+	// called from level blueprint to set shared camera to persistent camera actor 
+	// that is already placed in the world
+	UFUNCTION(BlueprintCallable, Category = Camera)
+	void SetSharedCamera(AENTSharedCamera* InSharedCamera);
 
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Entropy Game")
-	TSubclassOf<UUserWidget> StartingWidgetClass;
+protected:
+	// you would want this in game state or game instance if this was a networked game
+	AENTSharedCamera* SharedCamera;
 
-	UPROPERTY()
-	UUserWidget* CurrentWidget;
 };

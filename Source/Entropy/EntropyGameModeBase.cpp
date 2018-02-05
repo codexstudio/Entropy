@@ -2,27 +2,14 @@
 
 #include "EntropyGameModeBase.h"
 #include "Entropy.h"
-#include "UserWidget.h"
+#include "ENTSharedCamera.h"
 
 void AEntropyGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-	ChangeMenuWidget(StartingWidgetClass);
 }
 
-void AEntropyGameModeBase::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass)
+void AEntropyGameModeBase::SetSharedCamera(AENTSharedCamera* InSharedCamera)
 {
-	if (CurrentWidget != nullptr)
-	{
-		CurrentWidget->RemoveFromViewport();
-		CurrentWidget = nullptr;
-	}
-	if (NewWidgetClass != nullptr)
-	{
-		CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), NewWidgetClass);
-		if (CurrentWidget != nullptr)
-		{
-			CurrentWidget->AddToViewport();
-		}
-	}
+	SharedCamera = InSharedCamera;
 }

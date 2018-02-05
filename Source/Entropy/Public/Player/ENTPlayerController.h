@@ -10,7 +10,7 @@
  * 
  */
 
-UCLASS(abstract)
+UCLASS()
 class ENTROPY_API AENTPlayerController : public APlayerController
 {
 	GENERATED_BODY()

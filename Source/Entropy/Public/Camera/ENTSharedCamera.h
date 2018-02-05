@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "ENTSharedCamera.generated.h"
 
+class UCameraComponent;
+
 UCLASS()
 class ENTROPY_API AENTSharedCamera : public AActor
 {
@@ -15,22 +17,27 @@ public:
 	// Sets default values for this actor's properties
 	AENTSharedCamera();
 
+	FORCEINLINE UCameraComponent* GetCameraComponent() { return CameraComp; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void CalcCameraPosition();
+	FVector CalcCameraPosition();
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-private:
+protected:
 	TArray<AActor*> Players;
 
-	UPROPERTY(EditAnywhere, Category = Camera)
-	float CameraHeight;
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* RootComp;
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
-	class UCameraComponent* Camera;
+	UCameraComponent* CameraComp;
+
+	UPROPERTY(VisibleAnywhere, Category = Camera)
+	class USpringArmComponent* CameraBoomComp;
 };
