@@ -16,14 +16,12 @@ class ENTROPY_API AENTCharacter_Tank : public AENTCharacter
 
 public:
 	AENTCharacter_Tank();
-	
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
-public:
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	FORCEINLINE virtual ENTCharacterClass GetCharacterClass() const override { return ENTCharacterClass::Tank; }
+	
+protected:
+	virtual void BeginPlay() override;
+	
 };
