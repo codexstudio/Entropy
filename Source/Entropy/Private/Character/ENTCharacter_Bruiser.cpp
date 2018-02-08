@@ -14,5 +14,5 @@ void AENTCharacter_Bruiser::BeginPlay()
 
 void AENTCharacter_Bruiser::Tick(float DeltaTime)
 {
-
+	Super::Tick(DeltaTime);
 }

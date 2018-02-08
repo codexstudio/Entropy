@@ -3,7 +3,7 @@
 #include "ENTPlayerCameraManager.h"
 #include "EntropyGameModeBase.h"
 #include "ENTSharedCamera.h"
-#include "../../../../../../../UE4_UWP/Engine/Source/Runtime/Engine/Classes/Camera/CameraComponent.h"
+#include "Camera/CameraComponent.h"
 
 void AENTPlayerCameraManager::BeginPlay()
 {

@@ -9,10 +9,10 @@ AENTCharacter_ADC::AENTCharacter_ADC()
 
 void AENTCharacter_ADC::BeginPlay()
 {
-
+	Super::BeginPlay();
 }
 
 void AENTCharacter_ADC::Tick(float DeltaTime)
 {
-
+	Super::Tick(DeltaTime);
 }
