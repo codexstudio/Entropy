@@ -15,10 +15,12 @@ class ENTROPY_API AENTCharacter : public APawn
 public:
 	// Sets default values for this pawn's properties
 	AENTCharacter();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(VisibleAnywhere)
+	class UFloatingPawnMovement* MyPawnMovement;
 
 public:	
 	// Called every frame
@@ -44,7 +46,6 @@ public:
 	FORCEINLINE float GetMaxKnockBack() { return MaxKnockBack; }
 
 protected:
-
 	//Health
 	UPROPERTY(BlueprintReadOnly)
 	int CurrHealth;
@@ -90,5 +91,5 @@ protected:
 	float MaxKnockBack;
 
 private:
-	
+
 };
