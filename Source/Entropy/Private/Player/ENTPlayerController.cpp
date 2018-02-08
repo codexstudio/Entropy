@@ -3,6 +3,7 @@
 #include "ENTPlayerController.h"
 #include "ENTCharacter.h"
 #include "ENTPlayerCameraManager.h"
+#include "Runtime/Engine/Classes/GameFramework/FloatingPawnMovement.h"
 
 AENTPlayerController::AENTPlayerController()
 {
@@ -42,17 +43,17 @@ void AENTPlayerController::BeginPlay()
 
 void AENTPlayerController::MoveUp(float AxisValue)
 {
-	if (PlayerCharacter)
+	if (PlayerCharacter && AxisValue != 0)
 	{
-		
+		PlayerCharacter->AddMovementInput(FVector::ForwardVector, AxisValue);
 	}
 }
 
 void AENTPlayerController::MoveRight(float AxisValue)
 {
-	if (PlayerCharacter)
+	if (PlayerCharacter && AxisValue != 0)
 	{
-		
+		PlayerCharacter->AddMovementInput(FVector::RightVector, AxisValue);
 	}
 }
 

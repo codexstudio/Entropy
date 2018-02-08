@@ -9,12 +9,12 @@ AENTCharacter_Assassin::AENTCharacter_Assassin()
 
 void AENTCharacter_Assassin::BeginPlay()
 {
-
+	Super::BeginPlay();
 }
 
 void AENTCharacter_Assassin::Tick(float DeltaTime)
 {
-
+	Super::Tick(DeltaTime);
 }
 
 
