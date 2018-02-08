@@ -9,9 +9,10 @@ AENTCharacter_Tank::AENTCharacter_Tank()
 
 void AENTCharacter_Tank::BeginPlay()
 {
-
+	Super::BeginPlay();
 }
 
 void AENTCharacter_Tank::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
 }
