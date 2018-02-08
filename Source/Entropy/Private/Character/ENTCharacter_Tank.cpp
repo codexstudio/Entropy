@@ -14,5 +14,4 @@ void AENTCharacter_Tank::BeginPlay()
 
 void AENTCharacter_Tank::Tick(float DeltaTime)
 {
-
 }

@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ENTCharacterEnums.h"
 #include "ENTPickup.generated.h"
+
 
 UCLASS()
 class ENTROPY_API AENTPickup : public AActor
@@ -23,6 +25,17 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+public:
+
+	FORCEINLINE ENTCharacterClass GetPickupClass() { return PickupClass; }
+
+	void SetPickupClass(ENTCharacterClass ENTClass);
+	void SetRandomPickupClass();
+
+private:
+
+	class UPaperSpriteComponent* Sprite;
 	
+	ENTCharacterClass PickupClass;
 	
 };

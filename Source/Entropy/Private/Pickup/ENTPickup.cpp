@@ -8,7 +8,7 @@ AENTPickup::AENTPickup()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	SetRandomPickupClass();
 }
 
 // Called when the game starts or when spawned
@@ -25,3 +25,13 @@ void AENTPickup::Tick(float DeltaTime)
 
 }
 
+void AENTPickup::SetPickupClass(ENTCharacterClass ENTClass)
+{
+	PickupClass = ENTClass;
+	//Set Sprite
+}
+
+void AENTPickup::SetRandomPickupClass()
+{
+	SetPickupClass((ENTCharacterClass) FMath::RandRange(0, 3));
+}
