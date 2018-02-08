@@ -44,6 +44,7 @@ public:
 	FORCEINLINE float GetMaxKnockBack() { return MaxKnockBack; }
 
 protected:
+
 	//Health
 	UPROPERTY(BlueprintReadOnly)
 	int CurrHealth;
@@ -90,5 +91,4 @@ protected:
 
 private:
 	
-
 };
