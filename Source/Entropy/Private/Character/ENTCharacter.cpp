@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ENTCharacter.h"
-#include "Runtime/Engine/Classes/GameFramework/FloatingPawnMovement.h"
+#include "GameFramework/FloatingPawnMovement.h"
 
 
 
