@@ -18,6 +18,7 @@ public:
 	AENTSharedCamera();
 
 	FORCEINLINE UCameraComponent* GetCameraComponent() { return CameraComp; }
+	FORCEINLINE TArray<AActor*> GetPlayers() const { return Players; }
 
 protected:
 	// Called when the game starts or when spawned
