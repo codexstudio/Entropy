@@ -7,6 +7,8 @@
 
 void AENTPlayerCameraManager::BeginPlay()
 {
+	Super::BeginPlay();
+
 	AEntropyGameModeBase* const GM = (GetWorld() != nullptr) ? GetWorld()->GetAuthGameMode<AEntropyGameModeBase>() : nullptr;
 
 	if (GM)

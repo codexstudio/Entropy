@@ -35,7 +35,7 @@ void AENTSharedCamera::BeginPlay()
 
 FVector AENTSharedCamera::CalcCameraPosition()
 {
-	FVector CameraLoc;
+	FVector CameraLoc(ForceInitToZero);
 	for (const AActor* Player : Players)
 	{
 		CameraLoc += Player->GetActorLocation();
