@@ -19,7 +19,7 @@ public:
 	AENTPlayerController();
 
 	virtual void Possess(APawn* aPawn) override;
-	
+
 protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
@@ -30,7 +30,8 @@ protected:
 	void AimUp(float AxisValue);
 	void AimRight(float AxisValue);
 	
+	void Shoot(FVector FireDirection);
+
 protected:
 	class AENTCharacter* PlayerCharacter;
-
 };

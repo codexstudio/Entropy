@@ -35,14 +35,14 @@ void AENTSharedCamera::BeginPlay()
 
 FVector AENTSharedCamera::CalcCameraPosition()
 {
-	FVector CameraLoc;
-	for (const AActor* Player : Players)
-	{
-		CameraLoc += Player->GetActorLocation();
-	}
-	
-	CameraLoc /= Players.Num();
-	return CameraLoc;
+	//FVector CameraLoc;
+	//for (const AActor* Player : Players)
+	//{
+	//	CameraLoc += Player->GetActorLocation();
+	//}
+	//
+	//CameraLoc /= Players.Num();
+	return FVector(0, 0, 0);
 }
 
 // Called every frame
@@ -50,5 +50,5 @@ void AENTSharedCamera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	SetActorLocation(CalcCameraPosition());
+	//SetActorLocation(CalcCameraPosition());
 }
