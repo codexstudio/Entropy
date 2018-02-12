@@ -72,3 +72,9 @@ void AENTPlayerController::AimRight(float AxisValue)
 
 	}
 }
+
+void AENTPlayerController::Shoot(FVector FireDirection)
+{
+	
+}
+
