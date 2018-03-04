@@ -3,7 +3,7 @@
 #include "ENTPlayerController.h"
 #include "ENTCharacter.h"
 #include "ENTPlayerCameraManager.h"
-#include "Runtime/Engine/Classes/GameFramework/FloatingPawnMovement.h"
+#include "GameFramework/FloatingPawnMovement.h"
 
 AENTPlayerController::AENTPlayerController()
 {
@@ -17,6 +17,8 @@ void AENTPlayerController::Possess(APawn* aPawn)
 	if (aPawn->IsA(AENTCharacter::StaticClass()))
 	{
 		PlayerCharacter = Cast<AENTCharacter>(aPawn);
+
+		PlayerCharacter->SetActorRotation(FRotator(0.0f, -90.0f, 90.0f));
 	}
 }
 
@@ -32,8 +34,8 @@ void AENTPlayerController::SetupInputComponent()
 	// Twin stick shooter
 	InputComponent->BindAxis("MoveUp", this, &ThisClass::MoveUp);
 	InputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
-	InputComponent->BindAxis("AimUp", this, &ThisClass::AimUp);
-	InputComponent->BindAxis("AimRight", this, &ThisClass::AimRight);
+// 	InputComponent->BindAxis("AimUp", this, &ThisClass::AimUp);
+// 	InputComponent->BindAxis("AimRight", this, &ThisClass::AimRight);
 }
 
 void AENTPlayerController::BeginPlay()

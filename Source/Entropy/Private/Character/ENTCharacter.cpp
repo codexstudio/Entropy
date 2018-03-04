@@ -2,6 +2,7 @@
 
 #include "ENTCharacter.h"
 #include "GameFramework/FloatingPawnMovement.h"
+#include "PaperSpriteComponent.h"
 
 
 
@@ -10,8 +11,9 @@ AENTCharacter::AENTCharacter()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	MyPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>("Floating Pawn Movement");
+	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("Sprite Component");
 }
 
 // Called when the game starts or when spawned

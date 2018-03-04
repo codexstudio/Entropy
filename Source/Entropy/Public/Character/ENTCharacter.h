@@ -22,6 +22,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UFloatingPawnMovement* MyPawnMovement;
 
+	UPROPERTY(VisibleAnywhere)
+	class UPaperSpriteComponent* SpriteComponent;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
