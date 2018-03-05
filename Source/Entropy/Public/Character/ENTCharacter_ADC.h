@@ -21,6 +21,14 @@ public:
 
 	FORCEINLINE virtual ENTCharacterClass GetCharacterClass() const override { return ENTCharacterClass::ADC; }
 
+	void SpecialAttack() override;
+
+	void UseSpecial() override;
+
+	void ResetSpecialCooldown() override;
+
+	void StopSpecial() override;
+
 protected:
 	virtual void BeginPlay() override;
 
