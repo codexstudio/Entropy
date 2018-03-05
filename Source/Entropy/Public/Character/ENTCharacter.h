@@ -93,6 +93,29 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	float MaxKnockBack;
 
-private:
+public:
+	//Special Skill
+	FTimerHandle SpecialCooldownHandle;
 
+	FTimerHandle SpecialIntervalHandle;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	float SpecialCooldown;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	float SpecialInterval;
+
+	bool bIsSpecialReady;
+
+	bool bIsUsingSpecial;
+
+	virtual void UseSpecial();
+
+	virtual void ResetSpecialCooldown();
+
+	virtual void StopSpecial();
+
+	virtual void SpecialAttack() {}
+protected:
+	class AActor* Projectile;
 };
