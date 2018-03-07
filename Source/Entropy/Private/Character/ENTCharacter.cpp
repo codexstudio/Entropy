@@ -34,7 +34,7 @@ void AENTCharacter::UseSpecial()
 		bIsUsingSpecial = true;
 		bIsSpecialReady = false;
 
-		SpecialAttack();
+		StartAttack();
 
 		GetWorld()->GetTimerManager().SetTimer(SpecialIntervalHandle, this, &AENTCharacter::StopSpecial, SpecialInterval, false);
 	}
