@@ -36,6 +36,8 @@ void AENTPlayerController::SetupInputComponent()
 	InputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
 // 	InputComponent->BindAxis("AimUp", this, &ThisClass::AimUp);
 // 	InputComponent->BindAxis("AimRight", this, &ThisClass::AimRight);
+
+	InputComponent->BindAction("UseSpecial", IE_Pressed, this, &ThisClass::UseSpecial);
 }
 
 void AENTPlayerController::BeginPlay()
@@ -80,3 +82,10 @@ void AENTPlayerController::Shoot(FVector FireDirection)
 	
 }
 
+void AENTPlayerController::UseSpecial()
+{
+	if (PlayerCharacter)
+	{
+		PlayerCharacter->UseSpecial();
+	}
+}

@@ -21,7 +21,26 @@ public:
 
 	FORCEINLINE virtual ENTCharacterClass GetCharacterClass() const override { return ENTCharacterClass::ADC; }
 
+//Special Skill Methods
+	void SpecialAttack();
+
+	void StartAttack() override;
+
 protected:
 	virtual void BeginPlay() override;
 
+//Special Skill
+	UPROPERTY(EditDefaultsOnly, Category = "Special Skill")
+	FVector Offset;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Special Skill")
+	float AngleAdjuster;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Special Skill")
+	int BulletsPerSide;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Special Skill")
+	float SpecialROF;
+
+	FTimerHandle SpecialAttackIntervalHandle;
 };
