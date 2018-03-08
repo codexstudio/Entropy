@@ -37,7 +37,7 @@ void AENTCharacter_ADC::SpecialAttack()
 	}
 	if (Projectile)
 	{
-		FVector OffsetPosition;
+		FVector OffsetVelocity;
 		UWorld* World = GetWorld();
 		if (World)
 		{
@@ -50,8 +50,8 @@ void AENTCharacter_ADC::SpecialAttack()
 				for (int i = -BulletsPerSide; i <= BulletsPerSide; i++)
 				{
 					SpawnedProjectile = World->SpawnActor<AENTProjectile>(Projectile, GetActorLocation() + Offset*GetActorRightVector(), GetActorRotation() + FRotator(0.0f, 90.0f, 90.0f), SpawnParams);
-					OffsetPosition = FVector(SpawnedProjectile->ProjectileMovementComp->InitialSpeed, 0.0f, AngleAdjuster*i);
-					SpawnedProjectile->ProjectileMovementComp->SetVelocityInLocalSpace(OffsetPosition);
+					OffsetVelocity = FVector(SpawnedProjectile->ProjectileMovementComp->InitialSpeed, 0.0f, AngleAdjuster*i);
+					SpawnedProjectile->ProjectileMovementComp->SetVelocityInLocalSpace(OffsetVelocity);
 				}
 			}
 		}
