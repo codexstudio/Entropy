@@ -99,10 +99,10 @@ public:
 
 	FTimerHandle SpecialIntervalHandle;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Special Skill")
 	float SpecialCooldown;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Special Skill")
 	float SpecialInterval;
 
 	bool bIsSpecialReady;
@@ -115,7 +115,8 @@ public:
 
 	virtual void StopSpecial();
 
-	virtual void SpecialAttack() {}
+	virtual void StartAttack() {}
 protected:
-	class AActor* Projectile;
+	UPROPERTY(EditDefaultsOnly, Category = "Special Skill")
+	TSubclassOf<class AENTProjectile> Projectile;
 };
