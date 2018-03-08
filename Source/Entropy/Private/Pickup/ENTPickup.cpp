@@ -4,6 +4,7 @@
 #include "PaperSpriteComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Components/BoxComponent.h"
+#include "ENTCharacter.h"
 
 // Sets default values
 AENTPickup::AENTPickup()
@@ -11,12 +12,15 @@ AENTPickup::AENTPickup()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("Sprite Component");
-	SpriteComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>("Box Component");
-	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AENTPickup::OnPickup);
 	BoxComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
+	RootComponent = BoxComponent;
+
+	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("Sprite Component");
+	SpriteComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+	SpriteComponent->SetupAttachment(RootComponent);
+
+	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AENTPickup::OnPickup);
 }
 
 // Called when the game starts or when spawned
@@ -39,8 +43,8 @@ void AENTPickup::SetOrientation()
 	FVector NewVector = GetActorLocation();
 	NewVector.Z = -1;
 	SetActorLocation(NewVector);
-	RootComponent->SetRelativeRotation(FRotator(0, -90, 90));
-	RootComponent->SetRelativeScale3D(FVector(0.8, 0.8, 0.8));
+	SpriteComponent->SetRelativeRotation(FRotator(0, -90, 90));
+	SpriteComponent->SetRelativeScale3D(FVector(0.8, 0.8, 0.8));
 }
 
 void AENTPickup::SetPickupClass(ENTCharacterClass ENTClass)
@@ -62,5 +66,13 @@ void AENTPickup::SetRandomPickupClass()
 
 void AENTPickup::OnPickup(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Pick up!!!!")));
+	if (OtherActor->IsA(AENTCharacter::StaticClass())) {
+		AENTCharacter* charRef = Cast<AENTCharacter>(OtherActor);
+		FName otherClass = EnumToFName("ENTCharacterClass", charRef->GetCharacterClass());
+		FName thisClass = EnumToFName("ENTCharacterClass", PickupClass);
+		FString printStr = otherClass.ToString() + " picked up a " + thisClass.ToString() + " pickup.";
+		UKismetSystemLibrary::PrintString(this, printStr);
+		//charRef->ApplyPickup(PickupClass);
+		Destroy();
+	}
 }
