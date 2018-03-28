@@ -22,6 +22,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UFloatingPawnMovement* MyPawnMovement;
 
+	UPROPERTY(VisibleAnywhere)
+	class UPaperSpriteComponent* SpriteComponent;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -90,6 +93,30 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	float MaxKnockBack;
 
-private:
+public:
+	//Special Skill
+	FTimerHandle SpecialCooldownHandle;
 
+	FTimerHandle SpecialIntervalHandle;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Special Skill")
+	float SpecialCooldown;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Special Skill")
+	float SpecialInterval;
+
+	bool bIsSpecialReady;
+
+	bool bIsUsingSpecial;
+
+	virtual void UseSpecial();
+
+	virtual void ResetSpecialCooldown();
+
+	virtual void StopSpecial();
+
+	virtual void StartAttack() {}
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Special Skill")
+	TSubclassOf<class AENTProjectile> Projectile;
 };

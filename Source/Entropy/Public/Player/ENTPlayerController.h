@@ -31,6 +31,7 @@ protected:
 	void AimRight(float AxisValue);
 	
 	void Shoot(FVector FireDirection);
+	void UseSpecial();
 
 protected:
 	class AENTCharacter* PlayerCharacter;

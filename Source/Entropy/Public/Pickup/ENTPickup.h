@@ -7,7 +7,6 @@
 #include "ENTCharacterEnums.h"
 #include "ENTPickup.generated.h"
 
-
 UCLASS()
 class ENTROPY_API AENTPickup : public AActor
 {
@@ -32,10 +31,25 @@ public:
 	void SetPickupClass(ENTCharacterClass ENTClass);
 	void SetRandomPickupClass();
 
+protected:
+	UFUNCTION()
+	void OnPickup(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+protected:
+
+	UPROPERTY(VisibleAnywhere)
+	class UPaperSpriteComponent* SpriteComponent;
+	
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* BoxComponent;
+
+	ENTCharacterClass PickupClass;
+
+	UPROPERTY(EditAnywhere)
+	UDataTable* DataTable;
+	
 private:
 
-	class UPaperSpriteComponent* Sprite;
-	
-	ENTCharacterClass PickupClass;
-	
+	void SetOrientation();
+
 };
