@@ -72,7 +72,7 @@ void AENTPickup::OnPickup(UPrimitiveComponent* OverlappedComponent, AActor* Othe
 		FName thisClass = EnumToFName("ENTCharacterClass", PickupClass);
 		FString printStr = otherClass.ToString() + " picked up a " + thisClass.ToString() + " pickup.";
 		UKismetSystemLibrary::PrintString(this, printStr);
-		//charRef->ApplyPickup(PickupClass);
+		charRef->ApplyPickup(PickupClass);
 		Destroy();
 	}
 }

@@ -4,6 +4,8 @@
 #include "ENTCharacter.h"
 #include "ENTPlayerCameraManager.h"
 #include "GameFramework/FloatingPawnMovement.h"
+#include "Online.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 AENTPlayerController::AENTPlayerController()
 {
@@ -19,6 +21,16 @@ void AENTPlayerController::Possess(APawn* aPawn)
 		PlayerCharacter = Cast<AENTCharacter>(aPawn);
 
 		PlayerCharacter->SetActorRotation(FRotator(0.0f, -90.0f, 90.0f));
+	}
+
+	// hopefully this will print the gamertag.. 
+	if (IOnlineSubsystem::DoesInstanceExist(LIVE_SUBSYSTEM))
+	{
+		IOnlineIdentityPtr Ioi = IOnlineSubsystem::Get(LIVE_SUBSYSTEM)->GetIdentityInterface();
+		if (Ioi.IsValid())
+		{
+			UKismetSystemLibrary::PrintString(this, Ioi->GetPlayerNickname(GetLocalPlayer()->GetControllerId()));
+		}
 	}
 }
 
@@ -57,7 +69,7 @@ void AENTPlayerController::MoveRight(float AxisValue)
 {
 	if (PlayerCharacter && AxisValue != 0)
 	{
-		PlayerCharacter->AddMovementInput(FVector::RightVector, AxisValue);
+		PlayerCharacter->AddMovementInput(FVector::RightVector, AxisValue * PlayerCharacter->GetCurrentMovementSpeed());
 	}
 }
 
