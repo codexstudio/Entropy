@@ -69,7 +69,7 @@ void AENTPlayerController::MoveRight(float AxisValue)
 {
 	if (PlayerCharacter && AxisValue != 0)
 	{
-		PlayerCharacter->AddMovementInput(FVector::RightVector, AxisValue);
+		PlayerCharacter->AddMovementInput(FVector::RightVector, AxisValue * PlayerCharacter->GetCurrentMovementSpeed());
 	}
 }
 

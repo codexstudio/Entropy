@@ -16,5 +16,3 @@ void AENTCharacter_Assassin::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-
