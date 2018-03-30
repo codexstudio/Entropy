@@ -4,6 +4,7 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "PaperSpriteComponent.h"
 #include "Engine.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 AENTCharacter::AENTCharacter()
@@ -14,18 +15,22 @@ AENTCharacter::AENTCharacter()
 	MyPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>("Floating Pawn Movement");
 	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("Sprite Component");
 
-	//Assign current stats
-	CurrHealth = StartHealth;
-	CurrMovementSpeed = StartMovementSpeed;
-	CurrBasicDamage = StartBasicDamage;
-	CurrBasicROF = StartBasicROF;
-	CurrKnockBack = StartKnockBack;
 }
 
 // Called when the game starts or when spawned
 void AENTCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetActorRotation(FRotator(0.0f, -90.0f, 90.0f));
+
+	//Assign current stats
+	CurrHealth = StartHealth;
+	CurrMovementSpeed = StartMovementSpeed;
+	MyPawnMovement->MaxSpeed = CurrMovementSpeed;
+	CurrBasicDamage = StartBasicDamage;
+	CurrBasicROF = StartBasicROF;
+	CurrKnockBack = StartKnockBack;
 }
 
 // Called every frame
@@ -37,11 +42,40 @@ void AENTCharacter::Tick(float DeltaTime)
 
 void AENTCharacter::ApplyPickup(ENTCharacterClass PickupClass)
 {
-	AddToCurrHealth(PickupClass == GetCharacterClass() ? (int)SpecializedStatIncrement : BaseHealthIncrement);
-	AddToCurrMovementSpeed(PickupClass == GetCharacterClass() ? SpecializedStatIncrement : BaseMovSpeedIncrement);
-	AddToCurrBasicDamage(PickupClass == GetCharacterClass() ? SpecializedStatIncrement : BaseDamageIncrement);
-	AddToCurrBasicROF(PickupClass == GetCharacterClass() ? SpecializedStatIncrement : BaseROFIncrement);
-	AddToCurrKnockBack(PickupClass == GetCharacterClass() ? SpecializedStatIncrement : BaseKnockBackIncrement);
+	AddToCurrHealth((GetCharacterClass() == ENTCharacterClass::Tank && PickupClass == GetCharacterClass()) ? (int)SpecializedStatIncrement : BaseHealthIncrement);
+	AddToCurrMovementSpeed((GetCharacterClass() == ENTCharacterClass::Assassin && PickupClass == GetCharacterClass()) ? SpecializedStatIncrement : BaseMovSpeedIncrement);
+	AddToCurrBasicDamage(BaseDamageIncrement);
+	AddToCurrBasicROF((GetCharacterClass() == ENTCharacterClass::ADC && PickupClass == GetCharacterClass()) ? SpecializedStatIncrement : BaseROFIncrement);
+	AddToCurrKnockBack((GetCharacterClass() == ENTCharacterClass::Bruiser && PickupClass == GetCharacterClass()) ? SpecializedStatIncrement : BaseKnockBackIncrement);
+}
+
+
+void AENTCharacter::ReceiveDamage(uint32 dmg)
+{
+	UKismetSystemLibrary::PrintString(this, "Damage Taken. Health :" + FString::FromInt(CurrHealth - dmg));
+	if ((CurrHealth - dmg) <= 0) {
+		Die();
+	}
+	else {
+		CurrHealth -= dmg;
+	}
+}
+
+void AENTCharacter::Die()
+{
+	//Disable sprite renderer
+	//Disable colliders
+	//Disable input
+	//Wait for secs
+	Respawn();
+}
+
+void AENTCharacter::Respawn()
+{
+	//ReEnable sprite renderer
+	//ReEnable colliders
+	//ReEnable input
+	//Set transform position x & y to camera x & y
 }
 
 void AENTCharacter::UseSpecial()
@@ -74,24 +108,30 @@ void AENTCharacter::StopSpecial()
 void AENTCharacter::AddToCurrHealth(int value)
 {
 	CurrHealth += value;
+	UKismetSystemLibrary::PrintString(this, "Health :" + FString::SanitizeFloat(CurrHealth));
 }
 
 void AENTCharacter::AddToCurrMovementSpeed(float value)
 {
 	CurrMovementSpeed = (CurrMovementSpeed + value > MaxMovementSpeed) ? MaxMovementSpeed : CurrMovementSpeed += value;
+	MyPawnMovement->MaxSpeed = CurrMovementSpeed;
+	UKismetSystemLibrary::PrintString(this, "Movement Speed :" + FString::SanitizeFloat(CurrMovementSpeed));
 }
 
 void AENTCharacter::AddToCurrBasicDamage(float value)
 {
 	CurrBasicDamage += value;
+	UKismetSystemLibrary::PrintString(this, "Damage :" + FString::SanitizeFloat(CurrBasicDamage));
 }
 
 void AENTCharacter::AddToCurrBasicROF(float value)
 {
 	CurrBasicROF = (CurrBasicROF + value > MaxBasicROF) ? MaxBasicROF : CurrBasicROF += value;
+	UKismetSystemLibrary::PrintString(this, "ROF :" + FString::SanitizeFloat(CurrBasicROF));
 }
 
 void AENTCharacter::AddToCurrKnockBack(float value)
 {
 	CurrKnockBack = (CurrKnockBack + value > MaxKnockBack) ? MaxKnockBack : CurrKnockBack += value;
+	UKismetSystemLibrary::PrintString(this, "Knock Back :" + FString::SanitizeFloat(CurrKnockBack));
 }

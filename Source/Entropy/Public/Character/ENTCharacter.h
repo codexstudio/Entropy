@@ -50,6 +50,8 @@ public:
 	//Pickup
 	void ApplyPickup(ENTCharacterClass PickupClass);
 
+	void ReceiveDamage(uint32 dmg);
+
 protected:
 	//Stat Functions
 	void AddToCurrHealth(int value);
@@ -57,6 +59,9 @@ protected:
 	void AddToCurrBasicDamage(float value);
 	void AddToCurrBasicROF(float value);
 	void AddToCurrKnockBack(float value);
+
+	void Die();
+	void Respawn();
 
 protected:
 	//Health
@@ -106,7 +111,7 @@ protected:
 protected:
 	//Stat Increments
 	const int BaseHealthIncrement = 1;
-	const float BaseMovSpeedIncrement = 0.1f;
+	const float BaseMovSpeedIncrement = 100.0f;
 	const float BaseDamageIncrement = 0.5f;
 	const float BaseROFIncrement = 0.1f;
 	const float BaseKnockBackIncrement = 0.1f;

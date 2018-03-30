@@ -26,6 +26,25 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	UFUNCTION()
+	void OnCollisionEnter(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
-	
+protected:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	int DamageOutput;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	float DamageOutputCooldown;
+
+	UPROPERTY(VisibleAnywhere)
+	class UFloatingPawnMovement* FPMovComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	class UPaperSpriteComponent* SpriteComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* BoxComponent;
+
 };
