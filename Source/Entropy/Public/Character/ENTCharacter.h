@@ -50,6 +50,9 @@ public:
 	//Pickup
 	void ApplyPickup(ENTCharacterClass PickupClass);
 
+	//Damage
+	void ReceiveDamage(uint32 dmg);
+
 protected:
 	//Stat Functions
 	void AddToCurrHealth(int value);
@@ -57,6 +60,12 @@ protected:
 	void AddToCurrBasicDamage(float value);
 	void AddToCurrBasicROF(float value);
 	void AddToCurrKnockBack(float value);
+
+	void Die();
+	void Respawn();
+	void ComeOutOfInvulnerability();
+	void SetVulnerability(bool value);
+	void ToggleSprite();
 
 protected:
 	//Health
@@ -104,9 +113,17 @@ protected:
 	float MaxKnockBack;
 
 protected:
+	bool Vulnerable = true;
+	const float DeathTimer = 5.0f;
+	const float InvulnerableTimer = 3.0f;
+	const float InvulnerableFlickerRate = 0.2f;
+	FTimerHandle DeathHandle;
+	FTimerHandle InvulnerableHanlde;
+	FTimerHandle InvulnerableFlickerHandle;
+
 	//Stat Increments
 	const int BaseHealthIncrement = 1;
-	const float BaseMovSpeedIncrement = 0.1f;
+	const float BaseMovSpeedIncrement = 100.0f;
 	const float BaseDamageIncrement = 0.5f;
 	const float BaseROFIncrement = 0.1f;
 	const float BaseKnockBackIncrement = 0.1f;

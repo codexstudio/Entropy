@@ -20,6 +20,9 @@ public:
 
 	virtual void Possess(APawn* aPawn) override;
 
+	void EnableController();
+	void DisableController();
+
 protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;

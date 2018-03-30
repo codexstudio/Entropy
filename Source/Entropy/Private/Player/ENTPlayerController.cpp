@@ -6,6 +6,7 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Online.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "GameFramework/PlayerController.h"
 
 AENTPlayerController::AENTPlayerController()
 {
@@ -19,8 +20,6 @@ void AENTPlayerController::Possess(APawn* aPawn)
 	if (aPawn->IsA(AENTCharacter::StaticClass()))
 	{
 		PlayerCharacter = Cast<AENTCharacter>(aPawn);
-
-		PlayerCharacter->SetActorRotation(FRotator(0.0f, -90.0f, 90.0f));
 	}
 
 	// hopefully this will print the gamertag.. 
@@ -32,6 +31,18 @@ void AENTPlayerController::Possess(APawn* aPawn)
 			UKismetSystemLibrary::PrintString(this, Ioi->GetPlayerNickname(GetLocalPlayer()->GetControllerId()));
 		}
 	}
+}
+
+
+void AENTPlayerController::EnableController()
+{
+	EnableInput(Cast<APlayerController>(this));
+}
+
+
+void AENTPlayerController::DisableController()
+{
+	DisableInput(Cast<APlayerController>(this));
 }
 
 void AENTPlayerController::Tick(float DeltaTime)
@@ -69,7 +80,7 @@ void AENTPlayerController::MoveRight(float AxisValue)
 {
 	if (PlayerCharacter && AxisValue != 0)
 	{
-		PlayerCharacter->AddMovementInput(FVector::RightVector, AxisValue * PlayerCharacter->GetCurrentMovementSpeed());
+		PlayerCharacter->AddMovementInput(FVector::RightVector, AxisValue);
 	}
 }
 
@@ -91,7 +102,10 @@ void AENTPlayerController::AimRight(float AxisValue)
 
 void AENTPlayerController::Shoot(FVector FireDirection)
 {
-	
+	if (PlayerCharacter)
+	{
+
+	}
 }
 
 void AENTPlayerController::UseSpecial()
