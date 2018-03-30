@@ -19,8 +19,6 @@ void AENTPlayerController::Possess(APawn* aPawn)
 	if (aPawn->IsA(AENTCharacter::StaticClass()))
 	{
 		PlayerCharacter = Cast<AENTCharacter>(aPawn);
-
-		PlayerCharacter->SetActorRotation(FRotator(0.0f, -90.0f, 90.0f));
 	}
 
 	// hopefully this will print the gamertag.. 
@@ -69,7 +67,7 @@ void AENTPlayerController::MoveRight(float AxisValue)
 {
 	if (PlayerCharacter && AxisValue != 0)
 	{
-		PlayerCharacter->AddMovementInput(FVector::RightVector, AxisValue * PlayerCharacter->GetCurrentMovementSpeed());
+		PlayerCharacter->AddMovementInput(FVector::RightVector, AxisValue);
 	}
 }
 
@@ -91,7 +89,10 @@ void AENTPlayerController::AimRight(float AxisValue)
 
 void AENTPlayerController::Shoot(FVector FireDirection)
 {
-	
+	if (PlayerCharacter)
+	{
+
+	}
 }
 
 void AENTPlayerController::UseSpecial()
