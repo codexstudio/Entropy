@@ -5,6 +5,9 @@
 #include "PaperSpriteComponent.h"
 #include "Engine.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "ENTPlayerController.h"
+#include "EntropyGameModeBase.h"
+#include "ENTSharedCamera.h"
 
 // Sets default values
 AENTCharacter::AENTCharacter()
@@ -52,30 +55,62 @@ void AENTCharacter::ApplyPickup(ENTCharacterClass PickupClass)
 
 void AENTCharacter::ReceiveDamage(uint32 dmg)
 {
-	UKismetSystemLibrary::PrintString(this, "Damage Taken. Health :" + FString::FromInt(CurrHealth - dmg));
-	if ((CurrHealth - dmg) <= 0) {
-		Die();
-	}
-	else {
-		CurrHealth -= dmg;
+	if (Vulnerable) 
+	{
+		UKismetSystemLibrary::PrintString(this, "Damage Taken. Health :" + FString::FromInt(CurrHealth - dmg));
+		if ((CurrHealth - dmg) <= 0) {
+			Die();
+		}
+		else {
+			CurrHealth -= dmg;
+		}
 	}
 }
 
 void AENTCharacter::Die()
 {
-	//Disable sprite renderer
-	//Disable colliders
-	//Disable input
-	//Wait for secs
-	Respawn();
+	SetVulnerability(false);
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+	SetActorTickEnabled(false);
+	Cast<AENTPlayerController>(GetController())->DisableController();
+	GetWorld()->GetTimerManager().SetTimer(DeathHandle, this, &AENTCharacter::Respawn, DeathTimer, false);
 }
 
 void AENTCharacter::Respawn()
 {
-	//ReEnable sprite renderer
-	//ReEnable colliders
-	//ReEnable input
-	//Set transform position x & y to camera x & y
+	CurrHealth = StartHealth;
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	SetActorTickEnabled(true);
+	FVector CamLoc;
+	AEntropyGameModeBase* const GM = (GetWorld() != nullptr) ? GetWorld()->GetAuthGameMode<AEntropyGameModeBase>() : nullptr;
+	if (GM)
+	{
+		CamLoc = GM->GetSharedCamera()->GetActorLocation();
+	}
+	SetActorLocation(FVector(CamLoc.X, CamLoc.Y, 0.0f));
+	Cast<AENTPlayerController>(GetController())->EnableController();
+	GetWorld()->GetTimerManager().SetTimer(InvulnerableFlickerHandle, this, &AENTCharacter::ToggleSprite, InvulnerableFlickerRate, true);
+	GetWorld()->GetTimerManager().SetTimer(InvulnerableHanlde, this, &AENTCharacter::ComeOutOfInvulnerability, InvulnerableTimer, false);
+}
+
+void AENTCharacter::ComeOutOfInvulnerability()
+{
+	GetWorldTimerManager().ClearTimer(InvulnerableFlickerHandle);
+	SpriteComponent->SetVisibility(true);
+	SetVulnerability(true);
+}
+
+void AENTCharacter::SetVulnerability(bool value)
+{
+	Vulnerable = value;
+}
+
+void AENTCharacter::ToggleSprite()
+{
+	bool SpriteVisible = SpriteComponent->IsVisible();
+	SpriteComponent->SetVisibility(!SpriteVisible);
 }
 
 void AENTCharacter::UseSpecial()

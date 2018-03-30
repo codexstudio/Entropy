@@ -58,7 +58,6 @@ void AENTEnemy::OnCollisionEnter(UPrimitiveComponent* OverlappedComponent, AActo
 {
 	if (OtherActor->IsA(AENTCharacter::StaticClass())) {
 		AENTCharacter* charRef = Cast<AENTCharacter>(OtherActor);
-		UKismetSystemLibrary::PrintString(this, "Enemy hit ");
 		charRef->ReceiveDamage(DamageOutput);
 	}
 }
