@@ -6,6 +6,7 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Online.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "GameFramework/PlayerController.h"
 
 AENTPlayerController::AENTPlayerController()
 {
@@ -30,6 +31,18 @@ void AENTPlayerController::Possess(APawn* aPawn)
 			UKismetSystemLibrary::PrintString(this, Ioi->GetPlayerNickname(GetLocalPlayer()->GetControllerId()));
 		}
 	}
+}
+
+
+void AENTPlayerController::EnableController()
+{
+	EnableInput(Cast<APlayerController>(this));
+}
+
+
+void AENTPlayerController::DisableController()
+{
+	DisableInput(Cast<APlayerController>(this));
 }
 
 void AENTPlayerController::Tick(float DeltaTime)

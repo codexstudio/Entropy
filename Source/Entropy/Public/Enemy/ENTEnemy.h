@@ -35,9 +35,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	int DamageOutput;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
-	float DamageOutputCooldown;
-
 	UPROPERTY(VisibleAnywhere)
 	class UFloatingPawnMovement* FPMovComponent;
 
