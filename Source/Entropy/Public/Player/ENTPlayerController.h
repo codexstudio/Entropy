@@ -20,6 +20,12 @@ public:
 
 	virtual void Possess(APawn* aPawn) override;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsJoined;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsReady;
+
 protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
