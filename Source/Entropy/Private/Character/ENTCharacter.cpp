@@ -4,6 +4,10 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "PaperSpriteComponent.h"
 #include "Engine.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "ENTPlayerController.h"
+#include "EntropyGameModeBase.h"
+#include "ENTSharedCamera.h"
 
 // Sets default values
 AENTCharacter::AENTCharacter()
@@ -13,18 +17,100 @@ AENTCharacter::AENTCharacter()
 
 	MyPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>("Floating Pawn Movement");
 	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("Sprite Component");
+
 }
 
 // Called when the game starts or when spawned
 void AENTCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetActorRotation(FRotator(0.0f, -90.0f, 90.0f));
+
+	//Assign current stats
+	CurrHealth = StartHealth;
+	CurrMovementSpeed = StartMovementSpeed;
+	MyPawnMovement->MaxSpeed = CurrMovementSpeed;
+	CurrBasicDamage = StartBasicDamage;
+	CurrBasicROF = StartBasicROF;
+	CurrKnockBack = StartKnockBack;
 }
 
 // Called every frame
 void AENTCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+
+void AENTCharacter::ApplyPickup(ENTCharacterClass PickupClass)
+{
+	AddToCurrHealth((GetCharacterClass() == ENTCharacterClass::Tank && PickupClass == GetCharacterClass()) ? (int)SpecializedStatIncrement : BaseHealthIncrement);
+	AddToCurrMovementSpeed((GetCharacterClass() == ENTCharacterClass::Assassin && PickupClass == GetCharacterClass()) ? SpecializedStatIncrement : BaseMovSpeedIncrement);
+	AddToCurrBasicDamage(BaseDamageIncrement);
+	AddToCurrBasicROF((GetCharacterClass() == ENTCharacterClass::ADC && PickupClass == GetCharacterClass()) ? SpecializedStatIncrement : BaseROFIncrement);
+	AddToCurrKnockBack((GetCharacterClass() == ENTCharacterClass::Bruiser && PickupClass == GetCharacterClass()) ? SpecializedStatIncrement : BaseKnockBackIncrement);
+}
+
+
+void AENTCharacter::ReceiveDamage(uint32 dmg)
+{
+	if (Vulnerable) 
+	{
+		UKismetSystemLibrary::PrintString(this, "Damage Taken. Health :" + FString::FromInt(CurrHealth - dmg));
+		if ((CurrHealth - dmg) <= 0) {
+			Die();
+		}
+		else {
+			CurrHealth -= dmg;
+		}
+	}
+}
+
+void AENTCharacter::Die()
+{
+	SetVulnerability(false);
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+	SetActorTickEnabled(false);
+	Cast<AENTPlayerController>(GetController())->DisableController();
+	GetWorld()->GetTimerManager().SetTimer(DeathHandle, this, &AENTCharacter::Respawn, DeathTimer, false);
+}
+
+void AENTCharacter::Respawn()
+{
+	CurrHealth = StartHealth;
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	SetActorTickEnabled(true);
+	FVector CamLoc;
+	AEntropyGameModeBase* const GM = (GetWorld() != nullptr) ? GetWorld()->GetAuthGameMode<AEntropyGameModeBase>() : nullptr;
+	if (GM)
+	{
+		CamLoc = GM->GetSharedCamera()->GetActorLocation();
+	}
+	SetActorLocation(FVector(CamLoc.X, CamLoc.Y, 0.0f));
+	Cast<AENTPlayerController>(GetController())->EnableController();
+	GetWorld()->GetTimerManager().SetTimer(InvulnerableFlickerHandle, this, &AENTCharacter::ToggleSprite, InvulnerableFlickerRate, true);
+	GetWorld()->GetTimerManager().SetTimer(InvulnerableHanlde, this, &AENTCharacter::ComeOutOfInvulnerability, InvulnerableTimer, false);
+}
+
+void AENTCharacter::ComeOutOfInvulnerability()
+{
+	GetWorldTimerManager().ClearTimer(InvulnerableFlickerHandle);
+	SpriteComponent->SetVisibility(true);
+	SetVulnerability(true);
+}
+
+void AENTCharacter::SetVulnerability(bool value)
+{
+	Vulnerable = value;
+}
+
+void AENTCharacter::ToggleSprite()
+{
+	bool SpriteVisible = SpriteComponent->IsVisible();
+	SpriteComponent->SetVisibility(!SpriteVisible);
 }
 
 void AENTCharacter::UseSpecial()
@@ -52,4 +138,35 @@ void AENTCharacter::StopSpecial()
 
 	bIsUsingSpecial = false;
 	GetWorld()->GetTimerManager().SetTimer(SpecialCooldownHandle, this, &AENTCharacter::ResetSpecialCooldown, SpecialCooldown, false);
+}
+
+void AENTCharacter::AddToCurrHealth(int value)
+{
+	CurrHealth += value;
+	UKismetSystemLibrary::PrintString(this, "Health :" + FString::SanitizeFloat(CurrHealth));
+}
+
+void AENTCharacter::AddToCurrMovementSpeed(float value)
+{
+	CurrMovementSpeed = (CurrMovementSpeed + value > MaxMovementSpeed) ? MaxMovementSpeed : CurrMovementSpeed += value;
+	MyPawnMovement->MaxSpeed = CurrMovementSpeed;
+	UKismetSystemLibrary::PrintString(this, "Movement Speed :" + FString::SanitizeFloat(CurrMovementSpeed));
+}
+
+void AENTCharacter::AddToCurrBasicDamage(float value)
+{
+	CurrBasicDamage += value;
+	UKismetSystemLibrary::PrintString(this, "Damage :" + FString::SanitizeFloat(CurrBasicDamage));
+}
+
+void AENTCharacter::AddToCurrBasicROF(float value)
+{
+	CurrBasicROF = (CurrBasicROF + value > MaxBasicROF) ? MaxBasicROF : CurrBasicROF += value;
+	UKismetSystemLibrary::PrintString(this, "ROF :" + FString::SanitizeFloat(CurrBasicROF));
+}
+
+void AENTCharacter::AddToCurrKnockBack(float value)
+{
+	CurrKnockBack = (CurrKnockBack + value > MaxKnockBack) ? MaxKnockBack : CurrKnockBack += value;
+	UKismetSystemLibrary::PrintString(this, "Knock Back :" + FString::SanitizeFloat(CurrKnockBack));
 }

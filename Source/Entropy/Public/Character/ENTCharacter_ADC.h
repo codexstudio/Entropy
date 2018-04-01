@@ -21,6 +21,7 @@ public:
 
 	FORCEINLINE virtual ENTCharacterClass GetCharacterClass() const override { return ENTCharacterClass::ADC; }
 
+
 //Special Skill Methods
 	void SpecialAttack();
 

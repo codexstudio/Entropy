@@ -32,21 +32,40 @@ public:
 	virtual ENTCharacterClass GetCharacterClass() const PURE_VIRTUAL(AENTCharacter::GetCharacterClass, return ENTCharacterClass::NONE; );
 
 public:
-
 	//Stat Getters
 	FORCEINLINE int GetCurrentHealth() { return CurrHealth; }
-	FORCEINLINE int GetStartHealth() { return StartHealth; }
+	//FORCEINLINE int GetStartHealth() { return StartHealth; }
 	FORCEINLINE float GetCurrentMovementSpeed() { return CurrMovementSpeed; }
-	FORCEINLINE float GetStartMovementSpeed() { return StartMovementSpeed; }
-	FORCEINLINE float GetMaxMovementSpeed() { return MaxMovementSpeed; }
+	//FORCEINLINE float GetStartMovementSpeed() { return StartMovementSpeed; }
+	//FORCEINLINE float GetMaxMovementSpeed() { return MaxMovementSpeed; }
 	FORCEINLINE float GetCurrentBasicDamage() { return CurrBasicDamage; }
-	FORCEINLINE float GetStartBasicDamage() { return StartBasicDamage; }
+	//FORCEINLINE float GetStartBasicDamage() { return StartBasicDamage; }
 	FORCEINLINE float GetCurrentBasicROF() { return CurrBasicROF; }
-	FORCEINLINE float GetStartBasicROF() { return StartBasicROF; }
-	FORCEINLINE float GetMaxBasicROF() { return MaxBasicROF; }
+	//FORCEINLINE float GetStartBasicROF() { return StartBasicROF; }
+	//FORCEINLINE float GetMaxBasicROF() { return MaxBasicROF; }
 	FORCEINLINE float GetCurrentKnockBack() { return CurrKnockBack; }
-	FORCEINLINE float GetStartKnockBack() { return StartKnockBack; }
-	FORCEINLINE float GetMaxKnockBack() { return MaxKnockBack; }
+	//FORCEINLINE float GetStartKnockBack() { return StartKnockBack; }
+	//FORCEINLINE float GetMaxKnockBack() { return MaxKnockBack; }
+
+	//Pickup
+	void ApplyPickup(ENTCharacterClass PickupClass);
+
+	//Damage
+	void ReceiveDamage(uint32 dmg);
+
+protected:
+	//Stat Functions
+	void AddToCurrHealth(int value);
+	void AddToCurrMovementSpeed(float value);
+	void AddToCurrBasicDamage(float value);
+	void AddToCurrBasicROF(float value);
+	void AddToCurrKnockBack(float value);
+
+	void Die();
+	void Respawn();
+	void ComeOutOfInvulnerability();
+	void SetVulnerability(bool value);
+	void ToggleSprite();
 
 protected:
 	//Health
@@ -56,10 +75,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	int StartHealth;
 
+	//Movement Speed
 	UPROPERTY(BlueprintReadOnly)
 	float CurrMovementSpeed;
-
-	//Movement Speed
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	float StartMovementSpeed;
 
@@ -93,6 +112,25 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	float MaxKnockBack;
 
+protected:
+	bool Vulnerable = true;
+	const float DeathTimer = 5.0f;
+	const float InvulnerableTimer = 3.0f;
+	const float InvulnerableFlickerRate = 0.2f;
+	FTimerHandle DeathHandle;
+	FTimerHandle InvulnerableHanlde;
+	FTimerHandle InvulnerableFlickerHandle;
+
+	//Stat Increments
+	const int BaseHealthIncrement = 1;
+	const float BaseMovSpeedIncrement = 100.0f;
+	const float BaseDamageIncrement = 0.5f;
+	const float BaseROFIncrement = 0.1f;
+	const float BaseKnockBackIncrement = 0.1f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	float SpecializedStatIncrement;
+
 public:
 	//Special Skill
 	FTimerHandle SpecialCooldownHandle;
@@ -116,6 +154,7 @@ public:
 	virtual void StopSpecial();
 
 	virtual void StartAttack() {}
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Special Skill")
 	TSubclassOf<class AENTProjectile> Projectile;

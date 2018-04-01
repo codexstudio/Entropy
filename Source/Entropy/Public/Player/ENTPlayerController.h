@@ -20,11 +20,8 @@ public:
 
 	virtual void Possess(APawn* aPawn) override;
 
-	UPROPERTY(BlueprintReadWrite)
-	bool bIsJoined;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bIsReady;
+	void EnableController();
+	void DisableController();
 
 protected:
 	virtual void Tick(float DeltaTime) override;
