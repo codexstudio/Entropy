@@ -13,8 +13,11 @@ UCLASS()
 class ENTROPY_API UHealthWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
-	
-	
-	
+
+public:
+	class UImage* GetImage();
+
+protected:
+	UPROPERTY(meta = (BindWidget))
+	class UImage* BarImage;
 };
