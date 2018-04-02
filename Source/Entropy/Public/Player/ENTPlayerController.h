@@ -18,22 +18,24 @@ class ENTROPY_API AENTPlayerController : public APlayerController
 public:
 	AENTPlayerController();
 
+	virtual void Tick(float DeltaTime) override;
+
 	virtual void Possess(APawn* aPawn) override;
 
 	void EnableController();
 	void DisableController();
 
 protected:
-	virtual void Tick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;
 
 	void MoveUp(float AxisValue);
 	void MoveRight(float AxisValue);
-	void AimUp(float AxisValue);
-	void AimRight(float AxisValue);
-	
-	void Shoot(FVector FireDirection);
+
+	void ShootUp(float AxisValue);
+	void ShootRight(float AxisValue);
+
+	bool CheckRightAnalogStick();
 	void UseSpecial();
 
 protected:
