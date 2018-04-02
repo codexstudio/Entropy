@@ -41,7 +41,7 @@ void AENTCharacter_ADC::SpecialAttack()
 		UWorld* World = GetWorld();
 		if (World)
 		{
-			FActorSpawnParameters SpawnParams;
+			/*FActorSpawnParameters SpawnParams;
 			SpawnParams.Owner = this;
 			SpawnParams.Instigator = Instigator;
 			AENTProjectile* SpawnedProjectile;
@@ -49,16 +49,18 @@ void AENTCharacter_ADC::SpecialAttack()
 			{
 				for (int i = -BulletsPerSide; i <= BulletsPerSide; i++)
 				{
+					UKismetSystemLibrary::PrintString(this, "poop");
 					SpawnedProjectile = World->SpawnActor<AENTProjectile>(Projectile, GetActorLocation() + Offset*GetActorRightVector(), GetActorRotation() + FRotator(0.0f, 90.0f, 90.0f), SpawnParams);
 					OffsetVelocity = FVector(SpawnedProjectile->ProjectileMovementComp->InitialSpeed, 0.0f, AngleAdjuster*i);
 					SpawnedProjectile->ProjectileMovementComp->SetVelocityInLocalSpace(OffsetVelocity);
+					SpawnedProjectile->Destroy(0.5f);
 				}
-			}
+			}*/
 		}
 	}
 }
 
-void AENTCharacter_ADC::StartAttack()
+void AENTCharacter_ADC::StartSpecialAttack()
 {
 	GetWorld()->GetTimerManager().SetTimer(SpecialAttackIntervalHandle, this, &AENTCharacter_ADC::SpecialAttack, SpecialROF, true);
 }

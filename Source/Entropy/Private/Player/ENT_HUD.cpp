@@ -7,7 +7,9 @@ void AENT_HUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ChangeMenuWidget(StartingWidgetClass);
+	//ChangeMenuWidget(StartingWidgetClass);
+
+
 }
 
 void AENT_HUD::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass)

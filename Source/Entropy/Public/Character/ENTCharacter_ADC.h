@@ -25,7 +25,7 @@ public:
 //Special Skill Methods
 	void SpecialAttack();
 
-	void StartAttack() override;
+	void StartSpecialAttack() override;
 
 protected:
 	virtual void BeginPlay() override;
