@@ -8,6 +8,10 @@
 #include "ENTPlayerController.h"
 #include "EntropyGameModeBase.h"
 #include "ENTSharedCamera.h"
+#include "ENTProjectile.h"
+#include "WidgetComponent.h"
+#include "HealthWidget.h"
+#include "Image.h"
 
 // Sets default values
 AENTCharacter::AENTCharacter()
@@ -17,15 +21,37 @@ AENTCharacter::AENTCharacter()
 
 	MyPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>("Floating Pawn Movement");
 	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("Sprite Component");
+	RootComponent = SpriteComponent;
 
+	ArrowComponent = CreateDefaultSubobject<UArrowComponent>("Projectile Spawn Point");
+	ArrowComponent->SetupAttachment(RootComponent);
+	
+	HealthWidgetComp = CreateDefaultSubobject<UWidgetComponent>("Health Widget");
+	HealthWidgetComp->SetupAttachment(RootComponent);
+}
+
+void AENTCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	SetActorRotation(FRotator(0.0f, -90.0f, 90.0f));
+
+	ArrowComponent->SetRelativeRotation(FRotator(90.0f, 0.0f, 90.0f));
+	ArrowComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 250.0f));
+
+	HealthWidgetComp->SetWidgetClass(HealthWidgetClass);
+	HealthWidgetComp->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
+	HealthWidgetComp->SetRelativeLocation(FVector(0.0f, -1.0f, 0.0f));
+	HealthWidgetComp->SetDrawSize(FVector2D(100.0f, 100.0f));
+
+	//Illegal cast. Dont Use, will crash
+	//Cast<UHealthWidget>(HealthWidgetClass)->GetImage()->GetDynamicMaterial()->SetScalarParameterValue("Alpha", CurrHealth / 4);
 }
 
 // Called when the game starts or when spawned
 void AENTCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	SetActorRotation(FRotator(0.0f, -90.0f, 90.0f));
 
 	//Assign current stats
 	CurrHealth = StartHealth;
@@ -34,6 +60,8 @@ void AENTCharacter::BeginPlay()
 	CurrBasicDamage = StartBasicDamage;
 	CurrBasicROF = StartBasicROF;
 	CurrKnockBack = StartKnockBack;
+
+	//UImage::GetDynamicMaterial()->SetScalarParameterValue("Alpha", CurrHealth / 5);
 }
 
 // Called every frame
@@ -41,7 +69,6 @@ void AENTCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
 
 void AENTCharacter::ApplyPickup(ENTCharacterClass PickupClass)
 {
@@ -52,23 +79,25 @@ void AENTCharacter::ApplyPickup(ENTCharacterClass PickupClass)
 	AddToCurrKnockBack((GetCharacterClass() == ENTCharacterClass::Bruiser && PickupClass == GetCharacterClass()) ? SpecializedStatIncrement : BaseKnockBackIncrement);
 }
 
-
-void AENTCharacter::ReceiveDamage(uint32 dmg)
+void AENTCharacter::ReceiveDamage(uint32 Dmg)
 {
 	if (Vulnerable) 
 	{
-		UKismetSystemLibrary::PrintString(this, "Damage Taken. Health :" + FString::FromInt(CurrHealth - dmg));
-		if ((CurrHealth - dmg) <= 0) {
+		UKismetSystemLibrary::PrintString(this, "Damage Taken. Health :" + FString::FromInt(CurrHealth - Dmg));
+		if ((CurrHealth - Dmg) <= 0)
+		{
 			Die();
 		}
-		else {
-			CurrHealth -= dmg;
+		else
+		{
+			CurrHealth -= Dmg;
 		}
 	}
 }
 
 void AENTCharacter::Die()
 {
+	StopBaseAttack();
 	SetVulnerability(false);
 	SetActorHiddenInGame(true);
 	SetActorEnableCollision(false);
@@ -113,6 +142,29 @@ void AENTCharacter::ToggleSprite()
 	SpriteComponent->SetVisibility(!SpriteVisible);
 }
 
+void AENTCharacter::StartBaseAttack()
+{
+	if (!GetWorldTimerManager().IsTimerActive(BaseAttackHandle))
+	{
+		GetWorld()->GetTimerManager().SetTimer(BaseAttackHandle, this, &AENTCharacter::FireBaseAttack, 1 / CurrBasicROF, true);
+	}
+}
+
+void AENTCharacter::StopBaseAttack()
+{
+	GetWorldTimerManager().ClearTimer(BaseAttackHandle);
+}
+
+void AENTCharacter::FireBaseAttack()
+{
+	const FVector SpawnLocation = ArrowComponent->GetComponentLocation();
+	const FRotator SpawnRotation = ArrowComponent->GetComponentRotation();
+	const FTransform SpawnTransform = FTransform(SpawnRotation, SpawnLocation);
+	AENTProjectile* ProjectileActor = GetWorld()->SpawnActorDeferred<AENTProjectile>(Projectile, SpawnTransform);
+	ProjectileActor->SpawnSetup(ENTProjectileType::PlayerProjectile, CurrBasicDamage);
+	ProjectileActor->FinishSpawning(SpawnTransform);
+}
+
 void AENTCharacter::UseSpecial()
 {
 	if (!bIsUsingSpecial && bIsSpecialReady)
@@ -120,7 +172,7 @@ void AENTCharacter::UseSpecial()
 		bIsUsingSpecial = true;
 		bIsSpecialReady = false;
 
-		StartAttack();
+		StartSpecialAttack();
 
 		GetWorld()->GetTimerManager().SetTimer(SpecialIntervalHandle, this, &AENTCharacter::StopSpecial, SpecialInterval, false);
 	}

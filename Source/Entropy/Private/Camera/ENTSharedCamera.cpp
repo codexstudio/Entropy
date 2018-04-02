@@ -23,6 +23,11 @@ AENTSharedCamera::AENTSharedCamera()
 	CameraComp->SetupAttachment(CameraBoomComp, USpringArmComponent::SocketName);
 }
 
+float AENTSharedCamera::GetOrthoWidth() const
+{
+	return CameraComp->OrthoWidth;
+}
+
 // Called when the game starts or when spawned
 void AENTSharedCamera::BeginPlay()
 {
