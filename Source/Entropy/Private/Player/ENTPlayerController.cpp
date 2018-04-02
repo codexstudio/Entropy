@@ -11,9 +11,6 @@
 AENTPlayerController::AENTPlayerController()
 {
 	PlayerCameraManagerClass = AENTPlayerCameraManager::StaticClass();
-
-	bIsReady = false;
-	bIsJoined = false;
 }
 
 void AENTPlayerController::Possess(APawn* aPawn)
