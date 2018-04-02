@@ -16,6 +16,14 @@ enum class ENTCharacterClass : uint8
 	NONE
 };
 
+UENUM()
+enum class ENTProjectileType : uint8
+{
+	PlayerProjectile,
+	EnemyProjectile,
+	NONE
+};
+
 template<typename T>
 FName EnumToFName(const FString& enumName, const T value) {
 	UEnum* pEnum = FindObject<UEnum>(ANY_PACKAGE, *enumName);

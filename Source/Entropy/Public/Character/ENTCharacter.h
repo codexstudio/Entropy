@@ -25,9 +25,16 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UPaperSpriteComponent* SpriteComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* ArrowComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	class UWidgetComponent* HealthWidgetComp;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void PostInitializeComponents() override;
 
 	virtual ENTCharacterClass GetCharacterClass() const PURE_VIRTUAL(AENTCharacter::GetCharacterClass, return ENTCharacterClass::NONE; );
 
@@ -124,7 +131,7 @@ protected:
 	//Stat Increments
 	const int BaseHealthIncrement = 1;
 	const float BaseMovSpeedIncrement = 100.0f;
-	const float BaseDamageIncrement = 0.5f;
+	const float BaseDamageIncrement = 0.2f;
 	const float BaseROFIncrement = 0.1f;
 	const float BaseKnockBackIncrement = 0.1f;
 
@@ -153,9 +160,22 @@ public:
 
 	virtual void StopSpecial();
 
-	virtual void StartAttack() {}
+	virtual void StartSpecialAttack() {}
+
+//Base Attack
+public:
+	void StartBaseAttack();
+	void StopBaseAttack();
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Special Skill")
+
+	void FireBaseAttack();
+	FTimerHandle BaseAttackHandle;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	TSubclassOf<class AENTProjectile> Projectile;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Health Widget")
+	TSubclassOf<class UUserWidget> HealthWidgetClass;
 };

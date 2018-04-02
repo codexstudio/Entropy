@@ -26,14 +26,31 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void ReceiveDamage(float Dmg);
+
 protected:
 	UFUNCTION()
 	void OnCollisionEnter(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	void Die(bool DiedToPlayer = true);
 	
 protected:
+	UPROPERTY(BlueprintReadOnly)
+	float CurrHealth;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	float StartHealth;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	int DamageOutput;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	float ChanceToDropPickup;
+
+	const float MaxDistanceFromCamera = 22052.8f;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AENTPickup> PickupClass;
 
 	UPROPERTY(VisibleAnywhere)
 	class UFloatingPawnMovement* FPMovComponent;
@@ -44,4 +61,5 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* BoxComponent;
 
+	class AEntropyGameModeBase* GameMode;
 };

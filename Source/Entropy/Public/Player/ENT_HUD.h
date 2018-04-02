@@ -23,8 +23,8 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Entropy Game")
-	TSubclassOf<UUserWidget> StartingWidgetClass;
+		TSubclassOf<UUserWidget> StartingWidgetClass;
 
 	UPROPERTY()
-	UUserWidget* CurrentWidget;
+		UUserWidget* CurrentWidget;
 };

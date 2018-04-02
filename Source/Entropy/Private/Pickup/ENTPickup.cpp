@@ -50,10 +50,12 @@ void AENTPickup::SetOrientation()
 void AENTPickup::SetPickupClass(ENTCharacterClass ENTClass)
 {
 	PickupClass = ENTClass;
-	if (DataTable) {
+	if (DataTable) 
+	{
 		FName className = EnumToFName("ENTCharacterClass", ENTClass);
 		FPickupSpriteData* row = DataTable->FindRow<FPickupSpriteData>(className, TEXT(""));
-		if (row) {
+		if (row) 
+		{
 			SpriteComponent->SetSprite(row->PaperSprite);
 		}
 	}
@@ -66,13 +68,14 @@ void AENTPickup::SetRandomPickupClass()
 
 void AENTPickup::OnPickup(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->IsA(AENTCharacter::StaticClass())) {
-		AENTCharacter* charRef = Cast<AENTCharacter>(OtherActor);
-		FName otherClass = EnumToFName("ENTCharacterClass", charRef->GetCharacterClass());
-		FName thisClass = EnumToFName("ENTCharacterClass", PickupClass);
-		FString printStr = otherClass.ToString() + " picked up a " + thisClass.ToString() + " pickup.";
-		UKismetSystemLibrary::PrintString(this, printStr);
-		charRef->ApplyPickup(PickupClass);
+	if (OtherActor->IsA(AENTCharacter::StaticClass())) 
+	{
+		AENTCharacter* CharRef = Cast<AENTCharacter>(OtherActor);
+		FName OtherClass = EnumToFName("ENTCharacterClass", CharRef->GetCharacterClass());
+		FName ThisClass = EnumToFName("ENTCharacterClass", PickupClass);
+		FString PrintStr = OtherClass.ToString() + " picked up a " + ThisClass.ToString() + " pickup.";
+		UKismetSystemLibrary::PrintString(this, PrintStr);
+		CharRef->ApplyPickup(PickupClass);
 		Destroy();
 	}
 }

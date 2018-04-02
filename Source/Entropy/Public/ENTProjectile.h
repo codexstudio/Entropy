@@ -2,8 +2,10 @@
 
 #pragma once
 
+#include "PaperSprite.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ENTCharacterEnums.h"
 #include "ENTProjectile.generated.h"
 
 UCLASS()
@@ -15,13 +17,13 @@ public:
 	// Sets default values for this actor's properties
 	AENTProjectile();
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(VisibleAnywhere)
 	class UPaperSpriteComponent* PaperSpriteComp;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* BoxComp;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(VisibleAnywhere)
 	class UProjectileMovementComponent* ProjectileMovementComp;
 
 protected:
@@ -32,7 +34,18 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void SpawnSetup(ENTProjectileType SpawningClassType, float Dmg);
+
 	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
+protected:
+	float DamageOutput;
+
+	ENTProjectileType ProjectileType;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Sprites)
+	UPaperSprite* PlayerProjectileSprite;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Sprites)
+	UPaperSprite* EnemyProjectileSprite;
 };

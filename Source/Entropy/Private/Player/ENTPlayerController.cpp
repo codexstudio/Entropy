@@ -7,6 +7,7 @@
 #include "Online.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/PlayerController.h"
+#include "UnrealMathUtility.h"
 
 AENTPlayerController::AENTPlayerController()
 {
@@ -33,6 +34,10 @@ void AENTPlayerController::Possess(APawn* aPawn)
 	}
 }
 
+void AENTPlayerController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
 
 void AENTPlayerController::EnableController()
 {
@@ -45,11 +50,6 @@ void AENTPlayerController::DisableController()
 	DisableInput(Cast<APlayerController>(this));
 }
 
-void AENTPlayerController::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 void AENTPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -57,9 +57,8 @@ void AENTPlayerController::SetupInputComponent()
 	// Twin stick shooter
 	InputComponent->BindAxis("MoveUp", this, &ThisClass::MoveUp);
 	InputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
-// 	InputComponent->BindAxis("AimUp", this, &ThisClass::AimUp);
-// 	InputComponent->BindAxis("AimRight", this, &ThisClass::AimRight);
-
+ 	InputComponent->BindAxis("ShootUp", this, &ThisClass::ShootUp);
+	InputComponent->BindAxis("ShootRight", this, &ThisClass::ShootRight);
 	InputComponent->BindAction("UseSpecial", IE_Pressed, this, &ThisClass::UseSpecial);
 }
 
@@ -84,27 +83,63 @@ void AENTPlayerController::MoveRight(float AxisValue)
 	}
 }
 
-void AENTPlayerController::AimUp(float AxisValue)
+void AENTPlayerController::ShootUp(float AxisValue)
 {
-	if (PlayerCharacter)
-	{
+	if (CheckRightAnalogStick()) { return; }
 
+	const float X = InputComponent->GetAxisValue("ShootRight");
+	if (X != 0 || AxisValue != 0)
+	{
+		const FVector2D NormalizedVector = FVector2D(X, AxisValue).GetSafeNormal();
+		const float Yaw = FMath::RadiansToDegrees(FMath::Atan2(NormalizedVector.X, NormalizedVector.Y));
+		PlayerCharacter->SetActorRotation(FRotator(0, Yaw, 90.0f));
+		
+		PlayerCharacter->StartBaseAttack();
+	}
+	else
+	{
+		PlayerCharacter->StopBaseAttack();
 	}
 }
 
-void AENTPlayerController::AimRight(float AxisValue)
-{
-	if (PlayerCharacter)
-	{
 
+void AENTPlayerController::ShootRight(float AxisValue)
+{
+	if (CheckRightAnalogStick()) { return; }
+
+	const float Y = InputComponent->GetAxisValue("ShootUp");
+	if (AxisValue != 0 || Y != 0)
+	{
+		const FVector2D NormalizedVector = FVector2D(AxisValue, Y).GetSafeNormal();
+		const float Yaw = FMath::RadiansToDegrees(FMath::Atan2(NormalizedVector.Y, NormalizedVector.X));
+		PlayerCharacter->SetActorRotation(FRotator(0, Yaw, 90.0f));
+
+		PlayerCharacter->StartBaseAttack();
+	}
+	else
+	{
+		PlayerCharacter->StopBaseAttack();
 	}
 }
 
-void AENTPlayerController::Shoot(FVector FireDirection)
+bool AENTPlayerController::CheckRightAnalogStick()
 {
-	if (PlayerCharacter)
-	{
+	float X;
+	float Y;
+	GetInputAnalogStickState(EControllerAnalogStick::CAS_RightStick, X, Y);
 
+	if (X != 0 || Y != 0)
+	{
+		const FVector2D NormalizedVector = FVector2D(X, Y).GetSafeNormal();
+		const float Yaw = FMath::RadiansToDegrees(FMath::Atan2(NormalizedVector.Y, NormalizedVector.X));
+		PlayerCharacter->SetActorRotation(FRotator(0, Yaw, 90.0f));
+
+		PlayerCharacter->StartBaseAttack();
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 
