@@ -178,4 +178,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Health Widget")
 	TSubclassOf<class UUserWidget> HealthWidgetClass;
+
+public:
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = " ")
+	void IsPlayerAlive();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = " ")
+	void IsAliveAgain();
 };
+
