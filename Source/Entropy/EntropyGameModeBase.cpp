@@ -5,11 +5,28 @@
 #include "ENTSharedCamera.h"
 #include "UnrealMathUtility.h"
 #include "ENTEnemy.h"
+#include "EngineUtils.h"
 
 void AEntropyGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+AENTSharedCamera* AEntropyGameModeBase::GetSharedCamera()
+{
+	if (SharedCamera)
+	{
+		return SharedCamera;
+	}
+	else
+	{
+		for (TActorIterator<AENTSharedCamera> Itr(GetWorld()); Itr; ++Itr)
+		{
+			return *Itr;
+		}
+	}
+	return nullptr;
 }
 
 void AEntropyGameModeBase::SetSharedCamera(AENTSharedCamera* InSharedCamera)
