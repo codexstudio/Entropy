@@ -24,6 +24,8 @@ public:
 
 	void EnemyDied();
 
+
+
 protected:
 	virtual void BeginPlay() override;
 
