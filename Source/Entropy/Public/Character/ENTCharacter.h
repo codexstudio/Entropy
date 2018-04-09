@@ -31,6 +31,8 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UWidgetComponent* HealthWidgetComp;
 
+	class UAudioComponent* DamageAudioComponent;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -181,5 +183,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Health Widget")
 	TSubclassOf<class UUserWidget> HealthWidgetClass;
+
+protected:
+	class USoundCue* DamageSoundCue;
 };
 
