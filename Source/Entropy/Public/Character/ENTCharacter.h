@@ -180,10 +180,10 @@ protected:
 	TSubclassOf<class UUserWidget> HealthWidgetClass;
 
 public:
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = " ")
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void IsPlayerAlive();
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = " ")
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void IsAliveAgain();
 };
 
