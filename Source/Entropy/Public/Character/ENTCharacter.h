@@ -18,6 +18,12 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	FDelegateHandle OnControllerConnectionHandle;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Input)
+	void OnControllerConnectionChange(bool Connected, int32 UserID, int32 ControllerID);
+
 
 	UPROPERTY(VisibleAnywhere)
 	class UFloatingPawnMovement* MyPawnMovement;
