@@ -2,7 +2,7 @@
 
 #include "ENTCharacter.h"
 #include "GameFramework/FloatingPawnMovement.h"
-#include "PaperSpriteComponent.h"
+#include "PaperSpriteComponent.h" 
 #include "Engine.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "ENTPlayerController.h"
