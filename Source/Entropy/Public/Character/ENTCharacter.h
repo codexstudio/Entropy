@@ -31,6 +31,8 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UWidgetComponent* HealthWidgetComp;
 
+	class UAudioComponent* DamageAudioComponent;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -59,6 +61,8 @@ public:
 
 	//Damage
 	void ReceiveDamage(uint32 dmg);
+
+	FORCEINLINE bool IsDead() { return bIsDead; }
 
 protected:
 	//Stat Functions
@@ -120,6 +124,7 @@ protected:
 	float MaxKnockBack;
 
 protected:
+	bool bIsDead = false;
 	bool Vulnerable = true;
 	const float DeathTimer = 5.0f;
 	const float InvulnerableTimer = 3.0f;
@@ -179,11 +184,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Health Widget")
 	TSubclassOf<class UUserWidget> HealthWidgetClass;
 
-public:
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = " ")
-	void IsPlayerAlive();
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = " ")
-	void IsAliveAgain();
+protected:
+	class USoundCue* DamageSoundCue;
 };
 

@@ -2,7 +2,7 @@
 
 #include "ENTCharacter.h"
 #include "GameFramework/FloatingPawnMovement.h"
-#include "PaperSpriteComponent.h"
+#include "PaperSpriteComponent.h" 
 #include "Engine.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "ENTPlayerController.h"
@@ -11,6 +11,7 @@
 #include "ENTProjectile.h"
 #include "WidgetComponent.h"
 #include "HealthWidget.h"
+#include "Sound/SoundCue.h"
 
 // Sets default values
 AENTCharacter::AENTCharacter()
@@ -19,6 +20,7 @@ AENTCharacter::AENTCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MyPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>("Floating Pawn Movement");
+
 	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("Sprite Component");
 	RootComponent = SpriteComponent;
 	RootComponent->RelativeRotation = FRotator(0.0f, 90.0f, -90.0f);
@@ -29,9 +31,23 @@ AENTCharacter::AENTCharacter()
 	ArrowComponent->RelativeLocation = (FVector(0.0f, 0.0f, 250.0f));
 	
 	HealthWidgetComp = CreateDefaultSubobject<UWidgetComponent>("Health Widget");
+	HealthWidgetComp->bGenerateOverlapEvents = false;
+	HealthWidgetComp->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+	
 	HealthWidgetComp->SetupAttachment(RootComponent);
-	HealthWidgetComp->RelativeRotation = FRotator(0.0f, 90.0f, 0.0f);
+	HealthWidgetComp->RelativeRotation = FRotator(90.0f, 0.0f, 180.0f);
 	HealthWidgetComp->RelativeLocation = FVector(0.0f, 20.0f, 0.0f);
+
+	DamageAudioComponent = CreateDefaultSubobject<UAudioComponent>("Damage Audio Component");
+	DamageAudioComponent->bAutoActivate = false;
+	DamageAudioComponent->SetupAttachment(RootComponent);
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> DamageCue
+	{
+		TEXT("'/Game/Sound/SoundCue_Damage.SoundCue_Damage'")
+	};
+
+	DamageSoundCue = DamageCue.Object;
 }
 
 void AENTCharacter::PostInitializeComponents()
@@ -39,6 +55,12 @@ void AENTCharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	HealthWidgetComp->SetWidgetClass(HealthWidgetClass);
+	HealthWidgetComp->SetAbsolute(false, true, true);
+
+	if (DamageSoundCue->IsValidLowLevelFast())
+	{
+		DamageAudioComponent->SetSound(DamageSoundCue);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -94,12 +116,18 @@ void AENTCharacter::ReceiveDamage(uint32 Dmg)
 		{
 			HW->RepresentHealth(CurrHealth);
 		}
+		DamageAudioComponent->Play();
 	}
 }
 
 void AENTCharacter::Die()
 {
-	IsPlayerAlive();
+	bIsDead = true;
+	AEntropyGameModeBase* const GM = (GetWorld() != nullptr) ? GetWorld()->GetAuthGameMode<AEntropyGameModeBase>() : nullptr;
+	if (GM)
+	{
+		if (GM->CheckLossCondition()) { return; }
+	}
 	StopBaseAttack();
 	SetVulnerability(false);
 	SetActorHiddenInGame(true);
@@ -111,7 +139,7 @@ void AENTCharacter::Die()
 
 void AENTCharacter::Respawn()
 {
-	IsAliveAgain();
+	bIsDead = false;
 	CurrHealth = StartHealth;
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
@@ -149,6 +177,7 @@ void AENTCharacter::ToggleSprite()
 	bool SpriteVisible = SpriteComponent->IsVisible();
 	SpriteComponent->SetVisibility(!SpriteVisible);
 }
+
 
 void AENTCharacter::StartBaseAttack()
 {

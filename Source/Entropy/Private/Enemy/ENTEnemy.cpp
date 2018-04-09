@@ -2,7 +2,6 @@
 
 #include "ENTEnemy.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Components/BoxComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "PaperSpriteComponent.h"
 #include "ENTCharacter.h"
@@ -10,6 +9,10 @@
 #include "EntropyGameModeBase.h"
 #include "ENTSharedCamera.h"
 #include "ENTPickup.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundCue.h"
+#include "ConstructorHelpers.h"
 
 
 // Sets default values
@@ -18,13 +21,12 @@ AENTEnemy::AENTEnemy()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	BoxComponent = CreateDefaultSubobject<UBoxComponent>("Box Component");
-	BoxComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
-	RootComponent = BoxComponent;
-	BoxComponent->SetBoxExtent(FVector(600.0f, 600.0f, 1000.0f));
-	BoxComponent->RelativeScale3D = (FVector(0.25, 0.25, 0.25));
+	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("Capsule Component");
+	CapsuleComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
+	RootComponent = CapsuleComponent;
+	CapsuleComponent->SetCapsuleSize(600.0f, 1000.0f);
+	CapsuleComponent->RelativeScale3D = (FVector(0.25, 0.25, 0.25));
 	
-
 	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("Sprite Component");
 	SpriteComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	SpriteComponent->SetupAttachment(RootComponent);
@@ -36,7 +38,31 @@ AENTEnemy::AENTEnemy()
 	FPMovComponent->Deceleration = 2000.0f;
 	FPMovComponent->TurningBoost = 8.0f;
 
-	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AENTEnemy::OnCollisionEnter);
+	DeathAudioComponent = CreateDefaultSubobject<UAudioComponent>("Death Audio Component");
+	DeathAudioComponent->bAutoActivate = false;
+	DeathAudioComponent->SetupAttachment(RootComponent);
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> DeathCue
+	{
+		TEXT("'/Game/Sound/SoundCue_EnemyDeath.SoundCue_EnemyDeath'")
+	};
+
+	DeathSoundCue = DeathCue.Object;
+
+	CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AENTEnemy::OnCollisionEnter);
+}
+
+void AENTEnemy::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (DeathSoundCue->IsValidLowLevelFast())
+	{
+		DeathAudioComponent->SetSound(DeathSoundCue);
+	}
+
+	//DeathAudioComponent->OnAudioFinishedNative.AddDynamic(this, &APawn::Destroy());
+	//DeathAudioComponent->OnAudioFinishedNative.AddUFunction(this, &AENTEnemy::Destroy());
 }
 
 // Called when the game starts or when spawned
@@ -96,6 +122,7 @@ void AENTEnemy::Die(bool DiedToPlayer)
 {
 	if (DiedToPlayer)
 	{
+		//DeathAudioComponent->Play();
 		UKismetSystemLibrary::PrintString(this, "Enemy Down!!!");
 		float RandNum = FMath::RandRange(0.0f, 100.0f);
 		if (RandNum <= ChanceToDropPickup)

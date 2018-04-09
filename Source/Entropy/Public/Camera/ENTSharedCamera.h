@@ -19,7 +19,6 @@ public:
 
 	FORCEINLINE UCameraComponent* GetCameraComponent() { return CameraComp; }
 	FORCEINLINE TArray<AActor*> GetPlayers() const { return Players; }
-
 	float GetOrthoWidth() const;
 
 protected:

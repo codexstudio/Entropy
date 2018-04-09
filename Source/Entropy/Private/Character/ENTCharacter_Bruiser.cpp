@@ -9,7 +9,7 @@ AENTCharacter_Bruiser::AENTCharacter_Bruiser()
 
 void AENTCharacter_Bruiser::BeginPlay()
 {
-
+	Super::BeginPlay();
 }
 
 void AENTCharacter_Bruiser::Tick(float DeltaTime)

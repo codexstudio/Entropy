@@ -22,6 +22,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void PostInitializeComponents() override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -59,7 +60,11 @@ protected:
 	class UPaperSpriteComponent* SpriteComponent;
 
 	UPROPERTY(VisibleAnywhere)
-	class UBoxComponent* BoxComponent;
+	class UCapsuleComponent* CapsuleComponent;
+
+	class UAudioComponent* DeathAudioComponent;
+
+	class USoundCue* DeathSoundCue;
 
 	class AEntropyGameModeBase* GameMode;
 };
