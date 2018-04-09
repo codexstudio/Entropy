@@ -99,6 +99,7 @@ void AENTCharacter::ReceiveDamage(uint32 Dmg)
 
 void AENTCharacter::Die()
 {
+	IsPlayerAlive();
 	StopBaseAttack();
 	SetVulnerability(false);
 	SetActorHiddenInGame(true);
@@ -110,6 +111,7 @@ void AENTCharacter::Die()
 
 void AENTCharacter::Respawn()
 {
+	IsAliveAgain();
 	CurrHealth = StartHealth;
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
@@ -235,3 +237,5 @@ void AENTCharacter::AddToCurrKnockBack(float value)
 	CurrKnockBack = (CurrKnockBack + value > MaxKnockBack) ? MaxKnockBack : CurrKnockBack += value;
 	UKismetSystemLibrary::PrintString(this, "Knock Back :" + FString::SanitizeFloat(CurrKnockBack));
 }
+
+

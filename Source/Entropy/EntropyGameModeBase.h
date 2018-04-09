@@ -15,7 +15,8 @@ class ENTROPY_API AEntropyGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-	FORCEINLINE AENTSharedCamera* GetSharedCamera() { return SharedCamera; }
+	UFUNCTION(BlueprintPure, Category = Camera)
+	AENTSharedCamera* GetSharedCamera();
 
 	// called from level blueprint to set shared camera to persistent camera actor 
 	// that is already placed in the world
@@ -23,6 +24,8 @@ public:
 	void SetSharedCamera(AENTSharedCamera* InSharedCamera);
 
 	void EnemyDied();
+
+
 
 protected:
 	virtual void BeginPlay() override;
