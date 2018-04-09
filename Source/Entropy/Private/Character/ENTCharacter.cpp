@@ -11,6 +11,7 @@
 #include "ENTProjectile.h"
 #include "WidgetComponent.h"
 #include "HealthWidget.h"
+#include "Sound/SoundCue.h"
 
 // Sets default values
 AENTCharacter::AENTCharacter()
@@ -36,6 +37,17 @@ AENTCharacter::AENTCharacter()
 	HealthWidgetComp->SetupAttachment(RootComponent);
 	HealthWidgetComp->RelativeRotation = FRotator(90.0f, 0.0f, 180.0f);
 	HealthWidgetComp->RelativeLocation = FVector(0.0f, 20.0f, 0.0f);
+
+	DamageAudioComponent = CreateDefaultSubobject<UAudioComponent>("Damage Audio Component");
+	DamageAudioComponent->bAutoActivate = false;
+	DamageAudioComponent->SetupAttachment(RootComponent);
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> DamageCue
+	{
+		TEXT("'/Game/Sound/SoundCue_Damage.SoundCue_Damage'")
+	};
+
+	DamageSoundCue = DamageCue.Object;
 }
 
 void AENTCharacter::PostInitializeComponents()
@@ -43,8 +55,12 @@ void AENTCharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	HealthWidgetComp->SetWidgetClass(HealthWidgetClass);
-
 	HealthWidgetComp->SetAbsolute(false, true, true);
+
+	if (DamageSoundCue->IsValidLowLevelFast())
+	{
+		DamageAudioComponent->SetSound(DamageSoundCue);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -100,6 +116,7 @@ void AENTCharacter::ReceiveDamage(uint32 Dmg)
 		{
 			HW->RepresentHealth(CurrHealth);
 		}
+		DamageAudioComponent->Play();
 	}
 }
 

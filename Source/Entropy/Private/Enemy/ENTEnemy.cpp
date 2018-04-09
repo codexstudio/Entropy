@@ -10,6 +10,9 @@
 #include "ENTSharedCamera.h"
 #include "ENTPickup.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundCue.h"
+#include "ConstructorHelpers.h"
 
 
 // Sets default values
@@ -35,7 +38,31 @@ AENTEnemy::AENTEnemy()
 	FPMovComponent->Deceleration = 2000.0f;
 	FPMovComponent->TurningBoost = 8.0f;
 
+	DeathAudioComponent = CreateDefaultSubobject<UAudioComponent>("Death Audio Component");
+	DeathAudioComponent->bAutoActivate = false;
+	DeathAudioComponent->SetupAttachment(RootComponent);
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> DeathCue
+	{
+		TEXT("'/Game/Sound/SoundCue_EnemyDeath.SoundCue_EnemyDeath'")
+	};
+
+	DeathSoundCue = DeathCue.Object;
+
 	CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AENTEnemy::OnCollisionEnter);
+}
+
+void AENTEnemy::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (DeathSoundCue->IsValidLowLevelFast())
+	{
+		DeathAudioComponent->SetSound(DeathSoundCue);
+	}
+
+	//DeathAudioComponent->OnAudioFinishedNative.AddDynamic(this, &APawn::Destroy());
+	//DeathAudioComponent->OnAudioFinishedNative.AddUFunction(this, &AENTEnemy::Destroy());
 }
 
 // Called when the game starts or when spawned
@@ -95,6 +122,7 @@ void AENTEnemy::Die(bool DiedToPlayer)
 {
 	if (DiedToPlayer)
 	{
+		//DeathAudioComponent->Play();
 		UKismetSystemLibrary::PrintString(this, "Enemy Down!!!");
 		float RandNum = FMath::RandRange(0.0f, 100.0f);
 		if (RandNum <= ChanceToDropPickup)
