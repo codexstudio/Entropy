@@ -2,7 +2,6 @@
 
 #include "ENTEnemy.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Components/BoxComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "PaperSpriteComponent.h"
 #include "ENTCharacter.h"
@@ -10,6 +9,7 @@
 #include "EntropyGameModeBase.h"
 #include "ENTSharedCamera.h"
 #include "ENTPickup.h"
+#include "Components/CapsuleComponent.h"
 
 
 // Sets default values
@@ -18,13 +18,12 @@ AENTEnemy::AENTEnemy()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	BoxComponent = CreateDefaultSubobject<UBoxComponent>("Box Component");
-	BoxComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
-	RootComponent = BoxComponent;
-	BoxComponent->SetBoxExtent(FVector(600.0f, 600.0f, 1000.0f));
-	BoxComponent->RelativeScale3D = (FVector(0.25, 0.25, 0.25));
+	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("Capsule Component");
+	CapsuleComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
+	RootComponent = CapsuleComponent;
+	CapsuleComponent->SetCapsuleSize(600.0f, 1000.0f);
+	CapsuleComponent->RelativeScale3D = (FVector(0.25, 0.25, 0.25));
 	
-
 	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("Sprite Component");
 	SpriteComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	SpriteComponent->SetupAttachment(RootComponent);
@@ -36,7 +35,7 @@ AENTEnemy::AENTEnemy()
 	FPMovComponent->Deceleration = 2000.0f;
 	FPMovComponent->TurningBoost = 8.0f;
 
-	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AENTEnemy::OnCollisionEnter);
+	CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AENTEnemy::OnCollisionEnter);
 }
 
 // Called when the game starts or when spawned
