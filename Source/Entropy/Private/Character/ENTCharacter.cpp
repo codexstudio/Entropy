@@ -19,6 +19,7 @@ AENTCharacter::AENTCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MyPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>("Floating Pawn Movement");
+
 	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("Sprite Component");
 	RootComponent = SpriteComponent;
 	RootComponent->RelativeRotation = FRotator(0.0f, 90.0f, -90.0f);
@@ -29,8 +30,11 @@ AENTCharacter::AENTCharacter()
 	ArrowComponent->RelativeLocation = (FVector(0.0f, 0.0f, 250.0f));
 	
 	HealthWidgetComp = CreateDefaultSubobject<UWidgetComponent>("Health Widget");
+	HealthWidgetComp->bGenerateOverlapEvents = false;
+	HealthWidgetComp->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+	
 	HealthWidgetComp->SetupAttachment(RootComponent);
-	HealthWidgetComp->RelativeRotation = FRotator(0.0f, 90.0f, 0.0f);
+	HealthWidgetComp->RelativeRotation = FRotator(90.0f, 0.0f, 180.0f);
 	HealthWidgetComp->RelativeLocation = FVector(0.0f, 20.0f, 0.0f);
 }
 
@@ -39,6 +43,8 @@ void AENTCharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	HealthWidgetComp->SetWidgetClass(HealthWidgetClass);
+
+	HealthWidgetComp->SetAbsolute(false, true, true);
 }
 
 // Called when the game starts or when spawned
@@ -99,7 +105,12 @@ void AENTCharacter::ReceiveDamage(uint32 Dmg)
 
 void AENTCharacter::Die()
 {
-	IsPlayerAlive();
+	bIsDead = true;
+	AEntropyGameModeBase* const GM = (GetWorld() != nullptr) ? GetWorld()->GetAuthGameMode<AEntropyGameModeBase>() : nullptr;
+	if (GM)
+	{
+		if (GM->CheckLossCondition()) { return; }
+	}
 	StopBaseAttack();
 	SetVulnerability(false);
 	SetActorHiddenInGame(true);
@@ -111,7 +122,7 @@ void AENTCharacter::Die()
 
 void AENTCharacter::Respawn()
 {
-	IsAliveAgain();
+	bIsDead = false;
 	CurrHealth = StartHealth;
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
@@ -149,6 +160,7 @@ void AENTCharacter::ToggleSprite()
 	bool SpriteVisible = SpriteComponent->IsVisible();
 	SpriteComponent->SetVisibility(!SpriteVisible);
 }
+
 
 void AENTCharacter::StartBaseAttack()
 {

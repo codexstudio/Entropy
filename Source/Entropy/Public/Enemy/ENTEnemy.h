@@ -59,7 +59,7 @@ protected:
 	class UPaperSpriteComponent* SpriteComponent;
 
 	UPROPERTY(VisibleAnywhere)
-	class UBoxComponent* BoxComponent;
+	class UCapsuleComponent* CapsuleComponent;
 
 	class AEntropyGameModeBase* GameMode;
 };
