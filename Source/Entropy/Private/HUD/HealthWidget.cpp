@@ -2,8 +2,22 @@
 
 #include "HealthWidget.h"
 #include "Image.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
-UImage* UHealthWidget::GetImage()
+
+void UHealthWidget::RepresentHealth(uint32 Health)
 {
-	return BarImage;
+	if (MatInstance)
+	{
+		int StepCount = (Health + 4 - 1) / 4 * 4;
+		BarImage->GetDynamicMaterial()->SetScalarParameterValue("StepCount", StepCount);
+		BarImage->GetDynamicMaterial()->SetScalarParameterValue("Percent", ((float)Health / (float)StepCount));
+	}
+}
+
+void UHealthWidget::InitWidget()
+{
+	MatInstance = UMaterialInstanceDynamic::Create(GetMatInstance(), this);
+	BarImage->SetBrushFromMaterial(MatInstance);
 }
