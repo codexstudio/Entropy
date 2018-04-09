@@ -34,9 +34,9 @@ void AENTPlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaT
 		FMinimalViewInfo OrigPOV = OutVT.POV;
 
 		SharedCamera->GetCameraComponent()->GetCameraView(DeltaTime, OutVT.POV);
-
-		OutVT.POV.PostProcessSettings.SetBaseValues();
-		OutVT.POV.PostProcessBlendWeight = 1.0f;
+		
+		OutVT.POV.PostProcessSettings = OrigPOV.PostProcessSettings;
+		OutVT.POV.PostProcessBlendWeight = OrigPOV.PostProcessBlendWeight;
 	}
 	else
 	{

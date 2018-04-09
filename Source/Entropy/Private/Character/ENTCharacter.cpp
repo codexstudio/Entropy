@@ -11,7 +11,6 @@
 #include "ENTProjectile.h"
 #include "WidgetComponent.h"
 #include "HealthWidget.h"
-#include "Image.h"
 
 // Sets default values
 AENTCharacter::AENTCharacter()
@@ -20,32 +19,32 @@ AENTCharacter::AENTCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MyPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>("Floating Pawn Movement");
+
 	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("Sprite Component");
 	RootComponent = SpriteComponent;
+	RootComponent->RelativeRotation = FRotator(0.0f, 90.0f, -90.0f);
 
 	ArrowComponent = CreateDefaultSubobject<UArrowComponent>("Projectile Spawn Point");
 	ArrowComponent->SetupAttachment(RootComponent);
+	ArrowComponent->RelativeRotation = (FRotator(90.0f, 0.0f, 90.0f));
+	ArrowComponent->RelativeLocation = (FVector(0.0f, 0.0f, 250.0f));
 	
 	HealthWidgetComp = CreateDefaultSubobject<UWidgetComponent>("Health Widget");
+	HealthWidgetComp->bGenerateOverlapEvents = false;
+	HealthWidgetComp->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+	
 	HealthWidgetComp->SetupAttachment(RootComponent);
+	HealthWidgetComp->RelativeRotation = FRotator(90.0f, 0.0f, 180.0f);
+	HealthWidgetComp->RelativeLocation = FVector(0.0f, 20.0f, 0.0f);
 }
 
 void AENTCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	SetActorRotation(FRotator(0.0f, -90.0f, 90.0f));
-
-	ArrowComponent->SetRelativeRotation(FRotator(90.0f, 0.0f, 90.0f));
-	ArrowComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 250.0f));
-
 	HealthWidgetComp->SetWidgetClass(HealthWidgetClass);
-	HealthWidgetComp->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
-	HealthWidgetComp->SetRelativeLocation(FVector(0.0f, -1.0f, 0.0f));
-	HealthWidgetComp->SetDrawSize(FVector2D(100.0f, 100.0f));
 
-	//Illegal cast. Dont Use, will crash
-	//Cast<UHealthWidget>(HealthWidgetClass)->GetImage()->GetDynamicMaterial()->SetScalarParameterValue("Alpha", CurrHealth / 4);
+	HealthWidgetComp->SetAbsolute(false, true, true);
 }
 
 // Called when the game starts or when spawned
@@ -61,7 +60,11 @@ void AENTCharacter::BeginPlay()
 	CurrBasicROF = StartBasicROF;
 	CurrKnockBack = StartKnockBack;
 
-	//UImage::GetDynamicMaterial()->SetScalarParameterValue("Alpha", CurrHealth / 5);
+	if (UHealthWidget* HW = Cast<UHealthWidget>(HealthWidgetComp->GetUserWidgetObject()))
+	{
+		HW->InitWidget();
+		HW->RepresentHealth(CurrHealth);
+	}
 }
 
 // Called every frame
@@ -92,12 +95,22 @@ void AENTCharacter::ReceiveDamage(uint32 Dmg)
 		{
 			CurrHealth -= Dmg;
 		}
+
+		if (UHealthWidget* HW = Cast<UHealthWidget>(HealthWidgetComp->GetUserWidgetObject()))
+		{
+			HW->RepresentHealth(CurrHealth);
+		}
 	}
 }
 
 void AENTCharacter::Die()
 {
-	IsPlayerAlive();
+	bIsDead = true;
+	AEntropyGameModeBase* const GM = (GetWorld() != nullptr) ? GetWorld()->GetAuthGameMode<AEntropyGameModeBase>() : nullptr;
+	if (GM)
+	{
+		if (GM->CheckLossCondition()) { return; }
+	}
 	StopBaseAttack();
 	SetVulnerability(false);
 	SetActorHiddenInGame(true);
@@ -109,7 +122,7 @@ void AENTCharacter::Die()
 
 void AENTCharacter::Respawn()
 {
-	IsAliveAgain();
+	bIsDead = false;
 	CurrHealth = StartHealth;
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
@@ -124,6 +137,10 @@ void AENTCharacter::Respawn()
 	Cast<AENTPlayerController>(GetController())->EnableController();
 	GetWorld()->GetTimerManager().SetTimer(InvulnerableFlickerHandle, this, &AENTCharacter::ToggleSprite, InvulnerableFlickerRate, true);
 	GetWorld()->GetTimerManager().SetTimer(InvulnerableHanlde, this, &AENTCharacter::ComeOutOfInvulnerability, InvulnerableTimer, false);
+	if (UHealthWidget* HW = Cast<UHealthWidget>(HealthWidgetComp->GetUserWidgetObject()))
+	{
+		HW->RepresentHealth(CurrHealth);
+	}
 }
 
 void AENTCharacter::ComeOutOfInvulnerability()
@@ -144,6 +161,7 @@ void AENTCharacter::ToggleSprite()
 	SpriteComponent->SetVisibility(!SpriteVisible);
 }
 
+
 void AENTCharacter::StartBaseAttack()
 {
 	if (!GetWorldTimerManager().IsTimerActive(BaseAttackHandle))
@@ -154,7 +172,10 @@ void AENTCharacter::StartBaseAttack()
 
 void AENTCharacter::StopBaseAttack()
 {
-	GetWorldTimerManager().ClearTimer(BaseAttackHandle);
+	if (GetWorld())
+	{
+		GetWorldTimerManager().ClearTimer(BaseAttackHandle);
+	}
 }
 
 void AENTCharacter::FireBaseAttack()
@@ -163,7 +184,7 @@ void AENTCharacter::FireBaseAttack()
 	const FRotator SpawnRotation = ArrowComponent->GetComponentRotation();
 	const FTransform SpawnTransform = FTransform(SpawnRotation, SpawnLocation);
 	AENTProjectile* ProjectileActor = GetWorld()->SpawnActorDeferred<AENTProjectile>(Projectile, SpawnTransform);
-	ProjectileActor->SpawnSetup(ENTProjectileType::PlayerProjectile, CurrBasicDamage);
+	ProjectileActor->SpawnSetup(ENTProjectileType::PlayerProjectile, CurrBasicDamage, CurrKnockBack);
 	ProjectileActor->FinishSpawning(SpawnTransform);
 }
 
@@ -197,6 +218,10 @@ void AENTCharacter::StopSpecial()
 void AENTCharacter::AddToCurrHealth(int value)
 {
 	CurrHealth += value;
+	if (UHealthWidget* HW = Cast<UHealthWidget>(HealthWidgetComp->GetUserWidgetObject()))
+	{
+		HW->RepresentHealth(CurrHealth);
+	}
 	UKismetSystemLibrary::PrintString(this, "Health :" + FString::SanitizeFloat(CurrHealth));
 }
 

@@ -44,12 +44,13 @@ void AENTProjectile::Tick(float DeltaTime)
 
 }
 
-void AENTProjectile::SpawnSetup(ENTProjectileType SpawningClassType, float Dmg)
+void AENTProjectile::SpawnSetup(ENTProjectileType SpawningClassType, float Dmg, float KnockBack)
 {
 	ProjectileType = SpawningClassType;
 	if (ProjectileType == ENTProjectileType::PlayerProjectile)
 	{
 		PaperSpriteComp->SetSprite(PlayerProjectileSprite);
+		KnockBackOutput = KnockBack;
 	}
 	else if (ProjectileType == ENTProjectileType::EnemyProjectile)
 	{
@@ -65,7 +66,7 @@ void AENTProjectile::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 	{
 		//UKismetSystemLibrary::PrintString(this, "Hit Enemy!");
 		AENTEnemy* EnemyRef = Cast<AENTEnemy>(OtherActor);
-		EnemyRef->ReceiveDamage(DamageOutput);
+		EnemyRef->ReceiveDamage(DamageOutput, KnockBackOutput);
 		Destroy();
 	}
 	else if (OtherActor->IsA(AENTCharacter::StaticClass()) && ProjectileType == ENTProjectileType::EnemyProjectile)
