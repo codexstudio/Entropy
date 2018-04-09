@@ -15,9 +15,18 @@ class ENTROPY_API UHealthWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	class UImage* GetImage();
+	void RepresentHealth(uint32 Health);
+	void InitWidget();
 
 protected:
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	class UMaterialInstance* GetMatInstance() const;
+
 	UPROPERTY(meta = (BindWidget))
 	class UImage* BarImage;
+		
+	class UMaterialInstanceDynamic* MatInstance;
+
+	
 };

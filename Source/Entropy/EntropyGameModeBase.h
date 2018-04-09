@@ -15,7 +15,8 @@ class ENTROPY_API AEntropyGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-	FORCEINLINE AENTSharedCamera* GetSharedCamera() { return SharedCamera; }
+	UFUNCTION(BlueprintPure, Category = Camera)
+	AENTSharedCamera* GetSharedCamera();
 
 	// called from level blueprint to set shared camera to persistent camera actor 
 	// that is already placed in the world
@@ -24,10 +25,14 @@ public:
 
 	void EnemyDied();
 
+	bool CheckLossCondition();
+
 protected:
 	virtual void BeginPlay() override;
 
 	void SpawnClusterOfEnemies();
+
+	void GameOver();
 
 protected:
 	// you would want this in game state or game instance if this was a networked game
@@ -43,6 +48,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Spawning)
 	int MaxEnemyClusterAmount;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Developer Options")
+	bool bAllowGameOver = true;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AENTEnemy> EnemyClass;

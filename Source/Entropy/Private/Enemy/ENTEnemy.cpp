@@ -2,7 +2,6 @@
 
 #include "ENTEnemy.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Components/BoxComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "PaperSpriteComponent.h"
 #include "ENTCharacter.h"
@@ -10,6 +9,7 @@
 #include "EntropyGameModeBase.h"
 #include "ENTSharedCamera.h"
 #include "ENTPickup.h"
+#include "Components/CapsuleComponent.h"
 
 
 // Sets default values
@@ -18,14 +18,16 @@ AENTEnemy::AENTEnemy()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	BoxComponent = CreateDefaultSubobject<UBoxComponent>("Box Component");
-	BoxComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
-	BoxComponent->SetBoxExtent(FVector(600.0f, 600.0f, 1000.0f));
-	RootComponent = BoxComponent;
-
+	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("Capsule Component");
+	CapsuleComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
+	RootComponent = CapsuleComponent;
+	CapsuleComponent->SetCapsuleSize(600.0f, 1000.0f);
+	CapsuleComponent->RelativeScale3D = (FVector(0.25, 0.25, 0.25));
+	
 	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("Sprite Component");
 	SpriteComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	SpriteComponent->SetupAttachment(RootComponent);
+	SpriteComponent->RelativeRotation = (FRotator(0, -90, 90));
 
 	FPMovComponent = CreateDefaultSubobject<UFloatingPawnMovement>("Floating Pawn Movement");
 	FPMovComponent->MaxSpeed = 600.0f;
@@ -33,15 +35,14 @@ AENTEnemy::AENTEnemy()
 	FPMovComponent->Deceleration = 2000.0f;
 	FPMovComponent->TurningBoost = 8.0f;
 
-	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AENTEnemy::OnCollisionEnter);
+	CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AENTEnemy::OnCollisionEnter);
 }
 
 // Called when the game starts or when spawned
 void AENTEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	BoxComponent->SetRelativeScale3D(FVector(0.25, 0.25, 0.25));
-	SpriteComponent->SetRelativeRotation(FRotator(0, -90, 90));
+	
 	CurrHealth = StartHealth;
 
 	GameMode = (GetWorld() != nullptr) ? GetWorld()->GetAuthGameMode<AEntropyGameModeBase>() : nullptr;
@@ -77,7 +78,7 @@ void AENTEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void AENTEnemy::ReceiveDamage(float Dmg)
+void AENTEnemy::ReceiveDamage(float Dmg, float KnockBackAmount)
 {
 	UKismetSystemLibrary::PrintString(this, "Enemy Taking Fire!!!");
 	if ((CurrHealth - Dmg) <= 0) 
@@ -86,6 +87,7 @@ void AENTEnemy::ReceiveDamage(float Dmg)
 	}
 	else {
 		CurrHealth -= Dmg;
+		//Apply KnockBackAmount
 	}
 }
 

@@ -5,11 +5,33 @@
 #include "ENTSharedCamera.h"
 #include "UnrealMathUtility.h"
 #include "ENTEnemy.h"
+#include "EngineUtils.h"
+#include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
+#include "ENTCharacter.h"
+
+static TAutoConsoleVariable<int32> CVarAllowLossConditionOverride(TEXT("dev.AllowLossCondition"), 1, TEXT("0 Disables loss condition. 1 Enables loss condition"), ECVF_SetByConsole);
 
 void AEntropyGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	CVarAllowLossConditionOverride.AsVariable()->Set(bAllowGameOver);
+}
+
+AENTSharedCamera* AEntropyGameModeBase::GetSharedCamera()
+{
+	if (SharedCamera)
+	{
+		return SharedCamera;
+	}
+	else
+	{
+		for (TActorIterator<AENTSharedCamera> Itr(GetWorld()); Itr; ++Itr)
+		{
+			return *Itr;
+		}
+	}
+	return nullptr;
 }
 
 void AEntropyGameModeBase::SetSharedCamera(AENTSharedCamera* InSharedCamera)
@@ -32,6 +54,27 @@ void AEntropyGameModeBase::EnemyDied()
 	{
 		SpawnClusterOfEnemies();
 	}
+}
+
+bool AEntropyGameModeBase::CheckLossCondition()
+{
+	if (CVarAllowLossConditionOverride.GetValueOnGameThread() == 0) { return false; }
+
+	for (AActor* Player : GetSharedCamera()->GetPlayers())
+	{
+		AENTCharacter* ENTChar = Cast<AENTCharacter>(Player);
+		if (ENTChar)
+		{
+			if (!ENTChar->IsDead()) { return false; }
+		}
+	}
+	GameOver();
+	return true;
+}
+
+void AEntropyGameModeBase::GameOver()
+{
+	UGameplayStatics::OpenLevel(this, FName("GameOverMenu"));
 }
 
 void AEntropyGameModeBase::SpawnClusterOfEnemies()
