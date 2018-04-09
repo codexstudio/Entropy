@@ -105,7 +105,12 @@ void AENTCharacter::ReceiveDamage(uint32 Dmg)
 
 void AENTCharacter::Die()
 {
-	IsPlayerAlive();
+	bIsDead = true;
+	AEntropyGameModeBase* const GM = (GetWorld() != nullptr) ? GetWorld()->GetAuthGameMode<AEntropyGameModeBase>() : nullptr;
+	if (GM)
+	{
+		if (GM->CheckLossCondition()) { return; }
+	}
 	StopBaseAttack();
 	SetVulnerability(false);
 	SetActorHiddenInGame(true);
@@ -117,7 +122,7 @@ void AENTCharacter::Die()
 
 void AENTCharacter::Respawn()
 {
-	IsAliveAgain();
+	bIsDead = false;
 	CurrHealth = StartHealth;
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
@@ -155,6 +160,7 @@ void AENTCharacter::ToggleSprite()
 	bool SpriteVisible = SpriteComponent->IsVisible();
 	SpriteComponent->SetVisibility(!SpriteVisible);
 }
+
 
 void AENTCharacter::StartBaseAttack()
 {

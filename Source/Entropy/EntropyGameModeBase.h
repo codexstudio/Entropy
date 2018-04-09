@@ -25,12 +25,14 @@ public:
 
 	void EnemyDied();
 
-
+	bool CheckLossCondition();
 
 protected:
 	virtual void BeginPlay() override;
 
 	void SpawnClusterOfEnemies();
+
+	void GameOver();
 
 protected:
 	// you would want this in game state or game instance if this was a networked game
@@ -46,6 +48,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Spawning)
 	int MaxEnemyClusterAmount;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Developer Options")
+	bool bAllowGameOver = true;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AENTEnemy> EnemyClass;
