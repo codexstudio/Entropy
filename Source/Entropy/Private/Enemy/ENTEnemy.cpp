@@ -20,12 +20,15 @@ AENTEnemy::AENTEnemy()
 	
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>("Box Component");
 	BoxComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
-	BoxComponent->SetBoxExtent(FVector(600.0f, 600.0f, 1000.0f));
 	RootComponent = BoxComponent;
+	BoxComponent->SetBoxExtent(FVector(600.0f, 600.0f, 1000.0f));
+	BoxComponent->RelativeScale3D = (FVector(0.25, 0.25, 0.25));
+	
 
 	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("Sprite Component");
 	SpriteComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	SpriteComponent->SetupAttachment(RootComponent);
+	SpriteComponent->RelativeRotation = (FRotator(0, -90, 90));
 
 	FPMovComponent = CreateDefaultSubobject<UFloatingPawnMovement>("Floating Pawn Movement");
 	FPMovComponent->MaxSpeed = 600.0f;
@@ -40,8 +43,7 @@ AENTEnemy::AENTEnemy()
 void AENTEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	BoxComponent->SetRelativeScale3D(FVector(0.25, 0.25, 0.25));
-	SpriteComponent->SetRelativeRotation(FRotator(0, -90, 90));
+	
 	CurrHealth = StartHealth;
 
 	GameMode = (GetWorld() != nullptr) ? GetWorld()->GetAuthGameMode<AEntropyGameModeBase>() : nullptr;
@@ -77,7 +79,7 @@ void AENTEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void AENTEnemy::ReceiveDamage(float Dmg)
+void AENTEnemy::ReceiveDamage(float Dmg, float KnockBackAmount)
 {
 	UKismetSystemLibrary::PrintString(this, "Enemy Taking Fire!!!");
 	if ((CurrHealth - Dmg) <= 0) 
@@ -86,6 +88,7 @@ void AENTEnemy::ReceiveDamage(float Dmg)
 	}
 	else {
 		CurrHealth -= Dmg;
+		//Apply KnockBackAmount
 	}
 }
 

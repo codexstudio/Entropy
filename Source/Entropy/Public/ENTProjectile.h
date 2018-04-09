@@ -34,13 +34,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SpawnSetup(ENTProjectileType SpawningClassType, float Dmg);
+	void SpawnSetup(ENTProjectileType SpawningClassType, float Dmg, float KnockBack);
 
 	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
 protected:
 	float DamageOutput;
+	float KnockBackOutput = 0;
 
 	ENTProjectileType ProjectileType;
 
