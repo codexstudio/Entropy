@@ -85,61 +85,76 @@ void AENTPlayerController::MoveRight(float AxisValue)
 
 void AENTPlayerController::ShootUp(float AxisValue)
 {
-	if (CheckRightAnalogStick()) { return; }
+	if (PlayerCharacter)
+	{
+		if (CheckRightAnalogStick()) { return; }
 
-	const float X = InputComponent->GetAxisValue("ShootRight");
-	if (X != 0 || AxisValue != 0)
-	{
-		const FVector2D NormalizedVector = FVector2D(X, AxisValue).GetSafeNormal();
-		const float Yaw = FMath::RadiansToDegrees(FMath::Atan2(NormalizedVector.X, NormalizedVector.Y));
-		PlayerCharacter->SetActorRotation(FRotator(0, Yaw, 90.0f));
-		
-		PlayerCharacter->StartBaseAttack();
+		const float X = InputComponent->GetAxisValue("ShootRight");
+		if (X != 0 || AxisValue != 0)
+		{
+			const FVector2D NormalizedVector = FVector2D(X, AxisValue).GetSafeNormal();
+			const float Yaw = FMath::RadiansToDegrees(FMath::Atan2(NormalizedVector.X, NormalizedVector.Y));
+			PlayerCharacter->SetActorRotation(FRotator(0, Yaw, 90.0f));
+
+			PlayerCharacter->StartBaseAttack();
+		}
+		else
+		{
+			PlayerCharacter->StopBaseAttack();
+		}
 	}
-	else
-	{
-		PlayerCharacter->StopBaseAttack();
-	}
+	
 }
 
 
 void AENTPlayerController::ShootRight(float AxisValue)
 {
-	if (CheckRightAnalogStick()) { return; }
-
-	const float Y = InputComponent->GetAxisValue("ShootUp");
-	if (AxisValue != 0 || Y != 0)
+	if (PlayerCharacter)
 	{
-		const FVector2D NormalizedVector = FVector2D(AxisValue, Y).GetSafeNormal();
-		const float Yaw = FMath::RadiansToDegrees(FMath::Atan2(NormalizedVector.Y, NormalizedVector.X));
-		PlayerCharacter->SetActorRotation(FRotator(0, Yaw, 90.0f));
+		if (CheckRightAnalogStick()) { return; }
 
-		PlayerCharacter->StartBaseAttack();
+		const float Y = InputComponent->GetAxisValue("ShootUp");
+		if (AxisValue != 0 || Y != 0)
+		{
+			const FVector2D NormalizedVector = FVector2D(AxisValue, Y).GetSafeNormal();
+			const float Yaw = FMath::RadiansToDegrees(FMath::Atan2(NormalizedVector.Y, NormalizedVector.X));
+			PlayerCharacter->SetActorRotation(FRotator(0, Yaw, 90.0f));
+
+			PlayerCharacter->StartBaseAttack();
+		}
+		else
+		{
+			PlayerCharacter->StopBaseAttack();
+		}
 	}
-	else
-	{
-		PlayerCharacter->StopBaseAttack();
-	}
+	
 }
 
 bool AENTPlayerController::CheckRightAnalogStick()
 {
-	float X;
-	float Y;
-	GetInputAnalogStickState(EControllerAnalogStick::CAS_RightStick, X, Y);
-
-	if (X != 0 || Y != 0)
+	if (PlayerCharacter)
 	{
-		const FVector2D NormalizedVector = FVector2D(X, Y).GetSafeNormal();
-		const float Yaw = FMath::RadiansToDegrees(FMath::Atan2(NormalizedVector.Y, NormalizedVector.X));
-		PlayerCharacter->SetActorRotation(FRotator(0, Yaw, 90.0f));
+		float X;
+		float Y;
+		GetInputAnalogStickState(EControllerAnalogStick::CAS_RightStick, X, Y);
 
-		PlayerCharacter->StartBaseAttack();
-		return true;
+		if (X != 0 || Y != 0)
+		{
+			const FVector2D NormalizedVector = FVector2D(X, Y).GetSafeNormal();
+			const float Yaw = FMath::RadiansToDegrees(FMath::Atan2(NormalizedVector.Y, NormalizedVector.X));
+			PlayerCharacter->SetActorRotation(FRotator(0, Yaw, 90.0f));
+
+			PlayerCharacter->StartBaseAttack();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	else
 	{
-		return false;
+		return true;
 	}
 }
 
