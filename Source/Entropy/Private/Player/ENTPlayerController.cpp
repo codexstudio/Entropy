@@ -26,10 +26,12 @@ void AENTPlayerController::Possess(APawn* aPawn)
 	// hopefully this will print the gamertag.. 
 	if (IOnlineSubsystem::DoesInstanceExist(LIVE_SUBSYSTEM))
 	{
+// 		UKismetSystemLibrary::PrintString(this, (FString)L"online subsystem instance exists");
 		IOnlineIdentityPtr Ioi = IOnlineSubsystem::Get(LIVE_SUBSYSTEM)->GetIdentityInterface();
 		if (Ioi.IsValid())
 		{
-			UKismetSystemLibrary::PrintString(this, Ioi->GetPlayerNickname(GetLocalPlayer()->GetControllerId()));
+// 			UKismetSystemLibrary::PrintString(this, (FString)L"online identity exists");
+			UKismetSystemLibrary::PrintString(this, Ioi->GetPlayerNickname(0));
 		}
 	}
 }

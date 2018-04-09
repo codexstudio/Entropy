@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{BE3EFE0C-4AB5-DC2E-9644-9ABEBAE5700C}",
+	"EngineAssociation": "{A941D7DF-4544-299C-E047-FEB2A2321B32}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -13,6 +13,12 @@
 				"AIModule",
 				"UMG"
 			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "OnlineSubsystemLive",
+			"Enabled": true
 		}
 	]
 }
