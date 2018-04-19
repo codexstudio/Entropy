@@ -54,3 +54,15 @@ void AENTAIController::BeginPlay()
 		}
 	}
 }
+
+bool AENTAIController::GetIsStunned()
+{
+	return GetBlackboardComponent()->GetValueAsBool("IsStunned");
+}
+
+
+void AENTAIController::SetIsStunned(bool value)
+{
+	GetBlackboardComponent()->SetValueAsBool("IsStunned", value);
+}
+

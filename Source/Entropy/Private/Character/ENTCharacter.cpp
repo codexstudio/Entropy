@@ -186,8 +186,7 @@ void AENTCharacter::SetVulnerability(bool value)
 
 void AENTCharacter::ToggleSprite()
 {
-	bool SpriteVisible = SpriteComponent->IsVisible();
-	SpriteComponent->SetVisibility(!SpriteVisible);
+	SpriteComponent->SetVisibility(!SpriteComponent->IsVisible());
 }
 
 

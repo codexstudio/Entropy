@@ -27,13 +27,15 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	void ReceiveDamage(float Dmg, float KnockBackAmount);
+	void ReceiveDamage(float Dmg, float KnockBackAmount, FVector KnockbackDirection);
 
 protected:
 	UFUNCTION()
 	void OnCollisionEnter(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void Die(bool DiedToPlayer = true);
+
+	void ToggleStunned();
 	
 protected:
 	UPROPERTY(BlueprintReadOnly)
@@ -49,6 +51,9 @@ protected:
 	float ChanceToDropPickup;
 
 	const float MaxDistanceFromCamera = 22052.8f;
+
+	const float StunTimer = 0.1f;
+	FTimerHandle StunHandle;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AENTPickup> PickupClass;

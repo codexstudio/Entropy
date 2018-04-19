@@ -71,11 +71,14 @@ void AENTPickup::OnPickup(UPrimitiveComponent* OverlappedComponent, AActor* Othe
 	if (OtherActor->IsA(AENTCharacter::StaticClass())) 
 	{
 		AENTCharacter* CharRef = Cast<AENTCharacter>(OtherActor);
-		FName OtherClass = EnumToFName("ENTCharacterClass", CharRef->GetCharacterClass());
-		FName ThisClass = EnumToFName("ENTCharacterClass", PickupClass);
-		FString PrintStr = OtherClass.ToString() + " picked up a " + ThisClass.ToString() + " pickup.";
-		UKismetSystemLibrary::PrintString(this, PrintStr);
-		CharRef->ApplyPickup(PickupClass);
-		Destroy();
+		if (CharRef)
+		{
+			FName OtherClass = EnumToFName("ENTCharacterClass", CharRef->GetCharacterClass());
+			FName ThisClass = EnumToFName("ENTCharacterClass", PickupClass);
+			FString PrintStr = OtherClass.ToString() + " picked up a " + ThisClass.ToString() + " pickup.";
+			UKismetSystemLibrary::PrintString(this, PrintStr);
+			CharRef->ApplyPickup(PickupClass);
+			Destroy();
+		}
 	}
 }

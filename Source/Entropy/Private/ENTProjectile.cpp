@@ -64,16 +64,29 @@ void AENTProjectile::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("%s"), *GetDebugName(OtherActor)));
 	if (OtherActor->IsA(AENTEnemy::StaticClass()) && ProjectileType == ENTProjectileType::PlayerProjectile)
 	{
-		//UKismetSystemLibrary::PrintString(this, "Hit Enemy!");
 		AENTEnemy* EnemyRef = Cast<AENTEnemy>(OtherActor);
-		EnemyRef->ReceiveDamage(DamageOutput, KnockBackOutput);
-		Destroy();
+		if (EnemyRef)
+		{
+			EnemyRef->ReceiveDamage(DamageOutput, KnockBackOutput, this->GetActorForwardVector());
+			Destroy();
+		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(this, "ERROR: Failed Enemy Cast On Projectile Hit.");
+		}
 	}
 	else if (OtherActor->IsA(AENTCharacter::StaticClass()) && ProjectileType == ENTProjectileType::EnemyProjectile)
 	{
 		AENTCharacter* CharRef = Cast<AENTCharacter>(OtherActor);
-		CharRef->ReceiveDamage((uint32)DamageOutput);
-		Destroy();
+		if (CharRef)
+		{
+			CharRef->ReceiveDamage((uint32)DamageOutput);
+			Destroy();
+		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(this, "ERROR: Failed Character Cast On Projectile Hit.");
+		}
 	}
 }
 
