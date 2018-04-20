@@ -13,7 +13,7 @@
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 #include "ConstructorHelpers.h"
-
+#include "ENTAIController.h"
 
 // Sets default values
 AENTEnemy::AENTEnemy()
@@ -34,8 +34,8 @@ AENTEnemy::AENTEnemy()
 
 	FPMovComponent = CreateDefaultSubobject<UFloatingPawnMovement>("Floating Pawn Movement");
 	FPMovComponent->MaxSpeed = 600.0f;
-	FPMovComponent->Acceleration = 1000.0f;
-	FPMovComponent->Deceleration = 2000.0f;
+	FPMovComponent->Acceleration = 10000000.0f;
+	FPMovComponent->Deceleration = 0.0f;
 	FPMovComponent->TurningBoost = 8.0f;
 
 	DeathAudioComponent = CreateDefaultSubobject<UAudioComponent>("Death Audio Component");
@@ -102,10 +102,9 @@ void AENTEnemy::Tick(float DeltaTime)
 void AENTEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
-void AENTEnemy::ReceiveDamage(float Dmg, float KnockBackAmount)
+void AENTEnemy::ReceiveDamage(float Dmg, float KnockBackAmount, FVector KnockbackDirection)
 {
 	UKismetSystemLibrary::PrintString(this, "Enemy Taking Fire!!!");
 	if ((CurrHealth - Dmg) <= 0) 
@@ -114,7 +113,29 @@ void AENTEnemy::ReceiveDamage(float Dmg, float KnockBackAmount)
 	}
 	else {
 		CurrHealth -= Dmg;
-		//Apply KnockBackAmount
+		ToggleStunned();
+		FVector KnockBackNorm = (KnockbackDirection.GetSafeNormal());
+		FVector KnockBack = KnockBackNorm * KnockBackAmount;
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("KnockbackAmount: %f"), KnockBackAmount));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("KnockbackSize: %f"), KnockBack.Size()));
+		FPMovComponent->Velocity = KnockBack;
+		GetWorld()->GetTimerManager().SetTimer(StunHandle, this, &AENTEnemy::ToggleStunned, StunTimer, false);
+	}
+}
+
+void AENTEnemy::ToggleStunned()
+{
+	if (AENTAIController* AICon = Cast<AENTAIController>(GetController()))
+	{
+		if (AICon->GetIsStunned())
+		{
+			FPMovComponent->MaxSpeed = 600.0f;
+		} 
+		else
+		{
+			FPMovComponent->MaxSpeed = 20000.0f;
+		}
+		AICon->SetIsStunned(!AICon->GetIsStunned());
 	}
 }
 

@@ -26,11 +26,9 @@ void AENTPlayerController::Possess(APawn* aPawn)
 	// hopefully this will print the gamertag.. 
 	if (IOnlineSubsystem::DoesInstanceExist(LIVE_SUBSYSTEM))
 	{
-// 		UKismetSystemLibrary::PrintString(this, (FString)L"online subsystem instance exists");
 		IOnlineIdentityPtr Ioi = IOnlineSubsystem::Get(LIVE_SUBSYSTEM)->GetIdentityInterface();
 		if (Ioi.IsValid())
 		{
-// 			UKismetSystemLibrary::PrintString(this, (FString)L"online identity exists");
 			UKismetSystemLibrary::PrintString(this, Ioi->GetPlayerNickname(0));
 		}
 	}
@@ -39,17 +37,27 @@ void AENTPlayerController::Possess(APawn* aPawn)
 void AENTPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	if (PlayerCharacter && !PlayerCharacter->bIsShooting)
+	{
+		const FVector MoveInput = PlayerCharacter->GetLastMovementInputVector().GetSafeNormal();
+		if (!MoveInput.Equals(FVector::ZeroVector, SMALL_NUMBER))
+		{
+			const float Yaw = FMath::RadiansToDegrees(FMath::Atan2(-MoveInput.X, MoveInput.Y));
+			PlayerCharacter->SetActorRotation(FRotator(0, Yaw, 90.0f));
+		}
+	}
 }
 
 void AENTPlayerController::EnableController()
 {
-	EnableInput(Cast<APlayerController>(this));
+	EnableInput(this);
 }
 
 
 void AENTPlayerController::DisableController()
 {
-	DisableInput(Cast<APlayerController>(this));
+	DisableInput(this);
 }
 
 void AENTPlayerController::SetupInputComponent()
@@ -105,9 +113,7 @@ void AENTPlayerController::ShootUp(float AxisValue)
 			PlayerCharacter->StopBaseAttack();
 		}
 	}
-	
 }
-
 
 void AENTPlayerController::ShootRight(float AxisValue)
 {

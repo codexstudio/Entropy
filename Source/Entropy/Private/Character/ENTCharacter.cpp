@@ -81,6 +81,18 @@ void AENTCharacter::BeginPlay()
 		HW->InitWidget();
 		HW->RepresentHealth(CurrHealth);
 	}
+
+	OnControllerConnectionHandle = FCoreDelegates::OnControllerConnectionChange.AddUFunction(this, FName("OnControllerConnectionChange"));
+}
+
+void AENTCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	FCoreDelegates::OnControllerConnectionChange.Remove(OnControllerConnectionHandle);
+}
+
+void AENTCharacter::OnControllerConnectionChange_Implementation(bool Connected, int32 UserID, int32 ControllerID)
+{
+	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Connection change id: x: %d, connected: %s"), ControllerID, (Connected ? TEXT("true") : TEXT("false"))));
 }
 
 // Called every frame
@@ -174,8 +186,7 @@ void AENTCharacter::SetVulnerability(bool value)
 
 void AENTCharacter::ToggleSprite()
 {
-	bool SpriteVisible = SpriteComponent->IsVisible();
-	SpriteComponent->SetVisibility(!SpriteVisible);
+	SpriteComponent->SetVisibility(!SpriteComponent->IsVisible());
 }
 
 
@@ -184,6 +195,7 @@ void AENTCharacter::StartBaseAttack()
 	if (!GetWorldTimerManager().IsTimerActive(BaseAttackHandle))
 	{
 		GetWorld()->GetTimerManager().SetTimer(BaseAttackHandle, this, &AENTCharacter::FireBaseAttack, 1 / CurrBasicROF, true);
+		bIsShooting = true;
 	}
 }
 
@@ -192,6 +204,7 @@ void AENTCharacter::StopBaseAttack()
 	if (GetWorld())
 	{
 		GetWorldTimerManager().ClearTimer(BaseAttackHandle);
+		bIsShooting = false;
 	}
 }
 

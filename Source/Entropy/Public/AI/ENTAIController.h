@@ -16,6 +16,9 @@ class ENTROPY_API AENTAIController : public AAIController
 	
 public:
 	AENTAIController();
+
+	bool GetIsStunned();
+	void SetIsStunned(bool value);
 	
 protected:
 	virtual void BeginPlay() override;
