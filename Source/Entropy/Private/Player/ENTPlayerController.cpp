@@ -37,17 +37,27 @@ void AENTPlayerController::Possess(APawn* aPawn)
 void AENTPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	if (PlayerCharacter && !PlayerCharacter->bIsShooting)
+	{
+		const FVector MoveInput = PlayerCharacter->GetLastMovementInputVector().GetSafeNormal();
+		if (!MoveInput.Equals(FVector::ZeroVector, SMALL_NUMBER))
+		{
+			const float Yaw = FMath::RadiansToDegrees(FMath::Atan2(-MoveInput.X, MoveInput.Y));
+			PlayerCharacter->SetActorRotation(FRotator(0, Yaw, 90.0f));
+		}
+	}
 }
 
 void AENTPlayerController::EnableController()
 {
-	EnableInput(Cast<APlayerController>(this));
+	EnableInput(this);
 }
 
 
 void AENTPlayerController::DisableController()
 {
-	DisableInput(Cast<APlayerController>(this));
+	DisableInput(this);
 }
 
 void AENTPlayerController::SetupInputComponent()
@@ -103,9 +113,7 @@ void AENTPlayerController::ShootUp(float AxisValue)
 			PlayerCharacter->StopBaseAttack();
 		}
 	}
-	
 }
-
 
 void AENTPlayerController::ShootRight(float AxisValue)
 {
