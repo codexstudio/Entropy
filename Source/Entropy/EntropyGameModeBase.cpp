@@ -47,8 +47,12 @@ void AEntropyGameModeBase::SetSharedCamera(AENTSharedCamera* InSharedCamera)
 	}
 }
 
-void AEntropyGameModeBase::EnemyDied()
+void AEntropyGameModeBase::EnemyDied(bool DiedToPlayer = true)
 {
+	if (DiedToPlayer) {
+		EnemiesKilled++;
+	}
+
 	EnemiesInPlay--;
 	if (EnemiesInPlay <= (MaxEnemiesInPlay - MaxEnemyClusterAmount)) 
 	{

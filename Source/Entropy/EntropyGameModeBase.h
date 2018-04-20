@@ -23,7 +23,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Camera)
 	void SetSharedCamera(AENTSharedCamera* InSharedCamera);
 
-	void EnemyDied();
+	void EnemyDied(bool DiedToPlayer = true);
 
 	bool CheckLossCondition();
 
@@ -39,6 +39,7 @@ protected:
 	AENTSharedCamera* SharedCamera;
 
 	int EnemiesInPlay = 0;
+	int EnemiesKilled = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Spawning)
 	int MaxEnemiesInPlay;
