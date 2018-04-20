@@ -162,8 +162,9 @@ public:
 	float SpecialInterval;
 
 	bool bIsSpecialReady;
-
 	bool bIsUsingSpecial;
+	bool bIsShooting;
+
 
 	virtual void UseSpecial();
 

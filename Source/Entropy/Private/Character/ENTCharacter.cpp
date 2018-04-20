@@ -195,6 +195,7 @@ void AENTCharacter::StartBaseAttack()
 	if (!GetWorldTimerManager().IsTimerActive(BaseAttackHandle))
 	{
 		GetWorld()->GetTimerManager().SetTimer(BaseAttackHandle, this, &AENTCharacter::FireBaseAttack, 1 / CurrBasicROF, true);
+		bIsShooting = true;
 	}
 }
 
@@ -203,6 +204,7 @@ void AENTCharacter::StopBaseAttack()
 	if (GetWorld())
 	{
 		GetWorldTimerManager().ClearTimer(BaseAttackHandle);
+		bIsShooting = false;
 	}
 }
 
