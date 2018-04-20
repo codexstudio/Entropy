@@ -65,6 +65,12 @@ void AENTEnemy::PostInitializeComponents()
 	//DeathAudioComponent->OnAudioFinishedNative.AddUFunction(this, &AENTEnemy::Destroy());
 }
 
+void AENTEnemy::SpawnSetup(float HealthInjection, int DamageInjection)
+{
+	StartHealth += HealthInjection;
+	DamageOutput += DamageInjection;
+}
+
 // Called when the game starts or when spawned
 void AENTEnemy::BeginPlay()
 {

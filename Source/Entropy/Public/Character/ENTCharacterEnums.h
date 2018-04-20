@@ -43,3 +43,28 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UPaperSprite* PaperSprite;
 };
+
+USTRUCT(Blueprintable)
+struct FEnemyScalingData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "Every nth enemy killed will cause all values below to be added to the appropriate game stats."))
+	int EnemiesKilledPerScale;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How much additional health enemies get on top of their starting health."))
+	float EnemyHealthIncrement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How much additional damage enemies output on top of their starting damage."))
+	int EnemyDamageOutputIncrement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How much to increment the max enemy allowance in the level."))
+	int MaxEnemyIncrement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How much to increment the min enemy spawn cluster in the level."))
+	int MinClusterIncrement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How much to increment the max enemy spawn cluster in the level."))
+	int MaxClusterIncrement;
+};
