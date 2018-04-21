@@ -4,6 +4,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ENTCharacterEnums.h"
 #include "GameFramework/GameModeBase.h"
 #include "EntropyGameModeBase.generated.h"
 
@@ -23,7 +24,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Camera)
 	void SetSharedCamera(AENTSharedCamera* InSharedCamera);
 
-	void EnemyDied();
+	FORCEINLINE int GetEnemiesKilled() { return EnemiesKilled; }
+
+	void EnemyDied(bool DiedToPlayer = true);
 
 	bool CheckLossCondition();
 
@@ -32,6 +35,8 @@ protected:
 
 	void SpawnClusterOfEnemies();
 
+	void AttemptToScaleDifficulty();
+
 	void GameOver();
 
 protected:
@@ -39,6 +44,10 @@ protected:
 	AENTSharedCamera* SharedCamera;
 
 	int EnemiesInPlay = 0;
+	int EnemiesKilled = 0;
+
+	float EnemyGlobalHealthBoost = 0;
+	int EnemyGlobalDamageBoost = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Spawning)
 	int MaxEnemiesInPlay;
@@ -54,6 +63,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AENTEnemy> EnemyClass;
+
+	UPROPERTY(EditAnywhere)
+	UDataTable* ScalingDataTable;
 
 	float MinSpawnOffset;
 	float MaxSpawnOffset;

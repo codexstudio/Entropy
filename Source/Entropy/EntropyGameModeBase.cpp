@@ -9,6 +9,7 @@
 #include "GameFramework/Actor.h"
 #include "Kismet/GameplayStatics.h"
 #include "ENTCharacter.h"
+#include "ENTGameInstance.h"
 
 static TAutoConsoleVariable<int32> CVarAllowLossConditionOverride(TEXT("dev.AllowLossCondition"), 1, TEXT("0 Disables loss condition. 1 Enables loss condition"), ECVF_SetByConsole);
 
@@ -47,8 +48,13 @@ void AEntropyGameModeBase::SetSharedCamera(AENTSharedCamera* InSharedCamera)
 	}
 }
 
-void AEntropyGameModeBase::EnemyDied()
+void AEntropyGameModeBase::EnemyDied(bool DiedToPlayer)
 {
+	if (DiedToPlayer) {
+		EnemiesKilled++;
+		AttemptToScaleDifficulty();
+	}
+
 	EnemiesInPlay--;
 	if (EnemiesInPlay <= (MaxEnemiesInPlay - MaxEnemyClusterAmount)) 
 	{
@@ -74,6 +80,11 @@ bool AEntropyGameModeBase::CheckLossCondition()
 
 void AEntropyGameModeBase::GameOver()
 {
+	UENTGameInstance* GameIns = Cast<UENTGameInstance>(GetGameInstance());
+	if (GameIns)
+	{
+		GameIns->SetLastSessionScore(EnemiesKilled);
+	}
 	UGameplayStatics::OpenLevel(this, FName("GameOverMenu"));
 }
 
@@ -86,15 +97,39 @@ void AEntropyGameModeBase::SpawnClusterOfEnemies()
 									Offset * FMath::Sin(Angle) + SharedCamera->GetActorLocation().Y,
 									0);
 	FRotator SpawnRotation(0.0f, 0.0f, 0.0f);
-	FActorSpawnParameters SpawnInfo;
 
 	for (int i = 0; i < ClusterAmount; i++)
 	{
 		FVector SpawnPositionPlusOffset = SpawnPosition;
 		SpawnPositionPlusOffset.X += FMath::RandRange(-ClusterOffsetRange, ClusterOffsetRange);
 		SpawnPositionPlusOffset.Y += FMath::RandRange(-ClusterOffsetRange, ClusterOffsetRange);
-		GetWorld()->SpawnActor<AENTEnemy>(EnemyClass, SpawnPositionPlusOffset, SpawnRotation, SpawnInfo);
+		const FTransform SpawnTrans = FTransform(SpawnRotation, SpawnPositionPlusOffset);
+
+		AENTEnemy* EnemyActor = GetWorld()->SpawnActorDeferred<AENTEnemy>(EnemyClass, SpawnTrans);
+		EnemyActor->SpawnSetup(EnemyGlobalHealthBoost, EnemyGlobalDamageBoost);
+		EnemyActor->FinishSpawning(SpawnTrans);
 	}
 
 	EnemiesInPlay += ClusterAmount;
+}
+
+void AEntropyGameModeBase::AttemptToScaleDifficulty()
+{
+	FString StringNumPlayers = FString::FromInt(GetSharedCamera()->GetPlayers().Num()) + "PData";
+	FName DesiredRowName = FName(*StringNumPlayers);
+	
+	if (ScalingDataTable)
+	{
+		FEnemyScalingData* RowNumPlayers = ScalingDataTable->FindRow<FEnemyScalingData>(DesiredRowName, TEXT(""));
+
+		if (RowNumPlayers && EnemiesKilled != 0 && RowNumPlayers->EnemiesKilledPerScale != 0 && EnemiesKilled % RowNumPlayers->EnemiesKilledPerScale == 0)
+		{
+			EnemyGlobalHealthBoost += RowNumPlayers->EnemyHealthIncrement;
+			EnemyGlobalDamageBoost += RowNumPlayers->EnemyDamageOutputIncrement;
+			MaxEnemiesInPlay += RowNumPlayers->MaxEnemyIncrement;
+			MinEnemyClusterAmount += RowNumPlayers->MinClusterIncrement;
+			MaxEnemyClusterAmount += RowNumPlayers->MaxClusterIncrement;
+		}
+		//UKismetSystemLibrary::PrintString(this, "RRRR :" + FString::SanitizeFloat(RowNumPlayers->EnemiesKilledPerScale));
+	}
 }

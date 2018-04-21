@@ -65,6 +65,12 @@ void AENTEnemy::PostInitializeComponents()
 	//DeathAudioComponent->OnAudioFinishedNative.AddUFunction(this, &AENTEnemy::Destroy());
 }
 
+void AENTEnemy::SpawnSetup(float HealthInjection, int DamageInjection)
+{
+	StartHealth += HealthInjection;
+	DamageOutput += DamageInjection;
+}
+
 // Called when the game starts or when spawned
 void AENTEnemy::BeginPlay()
 {
@@ -111,7 +117,8 @@ void AENTEnemy::ReceiveDamage(float Dmg, float KnockBackAmount, FVector Knockbac
 	{
 		Die();
 	}
-	else {
+	else 
+	{
 		CurrHealth -= Dmg;
 		ToggleStunned();
 		FVector KnockBackNorm = (KnockbackDirection.GetSafeNormal());
@@ -156,16 +163,19 @@ void AENTEnemy::Die(bool DiedToPlayer)
 	}
 	if (GameMode)
 	{
-		GameMode->EnemyDied();
+		GameMode->EnemyDied(DiedToPlayer);
 	}
 	Destroy();
 }
 
 void AENTEnemy::OnCollisionEnter(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->IsA(AENTCharacter::StaticClass())) 
+	if (OtherActor->IsA(AENTCharacter::StaticClass()))
 	{
-		AENTCharacter* charRef = Cast<AENTCharacter>(OtherActor);
-		charRef->ReceiveDamage(DamageOutput);
+		AENTCharacter* CharRef = Cast<AENTCharacter>(OtherActor);
+		if (CharRef)
+		{
+			CharRef->ReceiveDamage(DamageOutput);
+		}
 	}
 }
