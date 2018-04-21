@@ -79,6 +79,7 @@ bool AEntropyGameModeBase::CheckLossCondition()
 
 void AEntropyGameModeBase::GameOver()
 {
+	
 	UGameplayStatics::OpenLevel(this, FName("GameOverMenu"));
 }
 
@@ -116,7 +117,7 @@ void AEntropyGameModeBase::AttemptToScaleDifficulty()
 	{
 		FEnemyScalingData* RowNumPlayers = ScalingDataTable->FindRow<FEnemyScalingData>(DesiredRowName, TEXT(""));
 
-		if (RowNumPlayers && EnemiesKilled != 0 && EnemiesKilled % RowNumPlayers->EnemiesKilledPerScale == 0)
+		if (RowNumPlayers && EnemiesKilled != 0 && RowNumPlayers->EnemiesKilledPerScale != 0 && EnemiesKilled % RowNumPlayers->EnemiesKilledPerScale == 0)
 		{
 			EnemyGlobalHealthBoost += RowNumPlayers->EnemyHealthIncrement;
 			EnemyGlobalDamageBoost += RowNumPlayers->EnemyDamageOutputIncrement;
