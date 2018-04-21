@@ -9,6 +9,7 @@
 #include "GameFramework/Actor.h"
 #include "Kismet/GameplayStatics.h"
 #include "ENTCharacter.h"
+#include "ENTGameInstance.h"
 
 static TAutoConsoleVariable<int32> CVarAllowLossConditionOverride(TEXT("dev.AllowLossCondition"), 1, TEXT("0 Disables loss condition. 1 Enables loss condition"), ECVF_SetByConsole);
 
@@ -79,6 +80,11 @@ bool AEntropyGameModeBase::CheckLossCondition()
 
 void AEntropyGameModeBase::GameOver()
 {
+	UENTGameInstance* GameIns = Cast<UENTGameInstance>(GetGameInstance());
+	if (GameIns)
+	{
+		GameIns->SetLastSessionScore(EnemiesKilled);
+	}
 	UGameplayStatics::OpenLevel(this, FName("GameOverMenu"));
 }
 

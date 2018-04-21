@@ -22,6 +22,9 @@ public:
 
 	virtual void Possess(APawn* aPawn) override;
 
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE FString GetGamerTag() { return GamerTag; }
+
 	void EnableController();
 	void DisableController();
 
@@ -40,4 +43,6 @@ protected:
 
 protected:
 	class AENTCharacter* PlayerCharacter;
+
+	FString GamerTag = "";
 };

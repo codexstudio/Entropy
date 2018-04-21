@@ -68,3 +68,28 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How much to increment the max enemy spawn cluster in the level."))
 	int MaxClusterIncrement;
 };
+
+USTRUCT(BlueprintType)
+struct FLeaderBoardEntry
+{
+	GENERATED_BODY()
+
+public:
+	FLeaderBoardEntry()
+	{
+		Team = FString("");
+		Score = 0;
+	}
+
+	FLeaderBoardEntry(FString TeamValue, int ScoreValue) 
+	{
+		Team = TeamValue;
+		Score = ScoreValue;
+	}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Team;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int Score;
+};
