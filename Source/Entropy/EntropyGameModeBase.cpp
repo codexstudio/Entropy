@@ -79,7 +79,6 @@ bool AEntropyGameModeBase::CheckLossCondition()
 
 void AEntropyGameModeBase::GameOver()
 {
-	
 	UGameplayStatics::OpenLevel(this, FName("GameOverMenu"));
 }
 
