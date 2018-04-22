@@ -163,8 +163,8 @@ public:
 
 	bool bIsSpecialReady;
 	bool bIsUsingSpecial;
-	bool bIsShooting;
 
+	bool bIsShooting;
 
 	virtual void UseSpecial();
 
@@ -182,7 +182,10 @@ public:
 protected:
 
 	void FireBaseAttack();
+	void ResetShootCooldown();
 	FTimerHandle BaseAttackHandle;
+	FTimerHandle BaseAttackCoodown;
+	bool bCanShoot = true;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")

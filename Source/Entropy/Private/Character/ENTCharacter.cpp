@@ -192,9 +192,9 @@ void AENTCharacter::ToggleSprite()
 
 void AENTCharacter::StartBaseAttack()
 {
-	if (!GetWorldTimerManager().IsTimerActive(BaseAttackHandle))
+	if (!GetWorldTimerManager().IsTimerActive(BaseAttackHandle) && bCanShoot)
 	{
-		GetWorld()->GetTimerManager().SetTimer(BaseAttackHandle, this, &AENTCharacter::FireBaseAttack, 1 / CurrBasicROF, true);
+		GetWorld()->GetTimerManager().SetTimer(BaseAttackHandle, this, &AENTCharacter::FireBaseAttack, 1 / CurrBasicROF, true, 0);
 		bIsShooting = true;
 	}
 }
@@ -204,8 +204,19 @@ void AENTCharacter::StopBaseAttack()
 	if (GetWorld())
 	{
 		GetWorldTimerManager().ClearTimer(BaseAttackHandle);
+		if (bIsShooting)
+		{
+			bCanShoot = false;
+			GetWorld()->GetTimerManager().SetTimer(BaseAttackCoodown, this, &AENTCharacter::ResetShootCooldown, 1 / CurrBasicROF, false);
+		}
+
 		bIsShooting = false;
 	}
+}
+
+void AENTCharacter::ResetShootCooldown()
+{
+	bCanShoot = true;
 }
 
 void AENTCharacter::FireBaseAttack()
