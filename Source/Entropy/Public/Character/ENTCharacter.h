@@ -37,7 +37,21 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UWidgetComponent* HealthWidgetComp;
 
+	//Sounds
 	class UAudioComponent* DamageAudioComponent;
+	class USoundCue* DamageSoundCue;
+
+	class UAudioComponent* DeathAudioComponent;
+	class USoundCue* DeathSoundCue;
+
+	class UAudioComponent* RespawnAudioComponent;
+	class USoundCue* RespawnSoundCue;
+
+	class UAudioComponent* ShootingAudioComponent;
+	class USoundCue* ShootingSoundCue;
+
+	class UAudioComponent* PickupAudioComponent;
+	class USoundCue* PickupSoundCue;
 
 public:	
 	// Called every frame
@@ -194,7 +208,5 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Health Widget")
 	TSubclassOf<class UUserWidget> HealthWidgetClass;
 
-protected:
-	class USoundCue* DamageSoundCue;
 };
 
