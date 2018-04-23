@@ -16,6 +16,8 @@ class ENTROPY_API AEntropyGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 public:
+	AEntropyGameModeBase();
+
 	UFUNCTION(BlueprintPure, Category = Camera)
 	AENTSharedCamera* GetSharedCamera();
 
@@ -32,6 +34,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
 	void SpawnClusterOfEnemies();
 
@@ -71,5 +74,4 @@ protected:
 	float MaxSpawnOffset;
 
 	const float ClusterOffsetRange = 700.0f;
-
 };
