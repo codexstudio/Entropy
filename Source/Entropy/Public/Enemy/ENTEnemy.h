@@ -38,6 +38,8 @@ protected:
 	void Die(bool DiedToPlayer = true);
 
 	void ToggleStunned();
+
+	void DelayedDestroy();
 	
 protected:
 	UPROPERTY(BlueprintReadOnly)
@@ -56,6 +58,7 @@ protected:
 
 	const float StunTimer = 0.1f;
 	FTimerHandle StunHandle;
+	FTimerHandle DeathHandle;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AENTPickup> PickupClass;
@@ -69,9 +72,15 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UCapsuleComponent* CapsuleComponent;
 
+	class AEntropyGameModeBase* GameMode;
+	
+	//Sounds
 	class UAudioComponent* DeathAudioComponent;
-
 	class USoundCue* DeathSoundCue;
 
-	class AEntropyGameModeBase* GameMode;
+	class UAudioComponent* TakeDamageAudioComponent;
+	class USoundCue* TakeDamageSoundCue;
+
+	class UAudioComponent* ShootingAudioComponent;
+	class USoundCue* ShootingSoundCue;
 };

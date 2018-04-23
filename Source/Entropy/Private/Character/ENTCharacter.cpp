@@ -42,12 +42,52 @@ AENTCharacter::AENTCharacter()
 	DamageAudioComponent->bAutoActivate = false;
 	DamageAudioComponent->SetupAttachment(RootComponent);
 
+	DeathAudioComponent = CreateDefaultSubobject<UAudioComponent>("Death Audio Component");
+	DeathAudioComponent->bAutoActivate = false;
+	DeathAudioComponent->SetupAttachment(RootComponent);
+
+	RespawnAudioComponent = CreateDefaultSubobject<UAudioComponent>("Respawn Audio Component");
+	RespawnAudioComponent->bAutoActivate = false;
+	RespawnAudioComponent->SetupAttachment(RootComponent);
+
+	ShootingAudioComponent = CreateDefaultSubobject<UAudioComponent>("Shooting Audio Component");
+	ShootingAudioComponent->bAutoActivate = false;
+	ShootingAudioComponent->SetupAttachment(RootComponent);
+
+	PickupAudioComponent = CreateDefaultSubobject<UAudioComponent>("Pickup Audio Component");
+	PickupAudioComponent->bAutoActivate = false;
+	PickupAudioComponent->SetupAttachment(RootComponent);
+
 	static ConstructorHelpers::FObjectFinder<USoundCue> DamageCue
 	{
-		TEXT("'/Game/Sound/SoundCue_Damage.SoundCue_Damage'")
+		TEXT("'/Game/Sound/Real_Sounds/Sound_Cues/Player_Hit_Sound_Cue.Player_Hit_Sound_Cue'")
+	};
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> DeathCue
+	{
+		TEXT("'/Game/Sound/Real_Sounds/Sound_Cues/Player_Death_Sound_Cue.Player_Death_Sound_Cue'")
+	};
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> RespawnCue
+	{
+		TEXT("'/Game/Sound/Real_Sounds/Sound_Cues/Player_Revive_Sound_Cue.Player_Revive_Sound_Cue'")
+	};
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> ShootingCue
+	{
+		TEXT("'/Game/Sound/Real_Sounds/Sound_Cues/Shooting_Sound_Cue.Shooting_Sound_Cue'")
+	};
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> PickupCue
+	{
+		TEXT("'/Game/Sound/Real_Sounds/Sound_Cues/Pickup_Sound_Cue.Pickup_Sound_Cue'")
 	};
 
 	DamageSoundCue = DamageCue.Object;
+	DeathSoundCue = DeathCue.Object;
+	RespawnSoundCue = RespawnCue.Object;
+	ShootingSoundCue = ShootingCue.Object;
+	PickupSoundCue = PickupCue.Object;
 }
 
 void AENTCharacter::PostInitializeComponents()
@@ -60,6 +100,22 @@ void AENTCharacter::PostInitializeComponents()
 	if (DamageSoundCue->IsValidLowLevelFast())
 	{
 		DamageAudioComponent->SetSound(DamageSoundCue);
+	}
+	if (DeathSoundCue->IsValidLowLevelFast())
+	{
+		DeathAudioComponent->SetSound(DeathSoundCue);
+	}
+	if (RespawnSoundCue->IsValidLowLevelFast())
+	{
+		RespawnAudioComponent->SetSound(RespawnSoundCue);
+	}
+	if (ShootingSoundCue->IsValidLowLevelFast())
+	{
+		ShootingAudioComponent->SetSound(ShootingSoundCue);
+	}
+	if (PickupSoundCue->IsValidLowLevelFast())
+	{
+		PickupAudioComponent->SetSound(PickupSoundCue);
 	}
 }
 
@@ -103,6 +159,7 @@ void AENTCharacter::Tick(float DeltaTime)
 
 void AENTCharacter::ApplyPickup(ENTCharacterClass PickupClass)
 {
+	PickupAudioComponent->Play();
 	AddToCurrHealth((GetCharacterClass() == ENTCharacterClass::Tank && PickupClass == GetCharacterClass()) ? (int)SpecializedStatIncrement : BaseHealthIncrement);
 	AddToCurrMovementSpeed((GetCharacterClass() == ENTCharacterClass::Assassin && PickupClass == GetCharacterClass()) ? SpecializedStatIncrement : BaseMovSpeedIncrement);
 	AddToCurrBasicDamage(BaseDamageIncrement);
@@ -114,7 +171,7 @@ void AENTCharacter::ReceiveDamage(uint32 Dmg)
 {
 	if (Vulnerable) 
 	{
-		UKismetSystemLibrary::PrintString(this, "Damage Taken. Health :" + FString::FromInt(CurrHealth - Dmg));
+		//UKismetSystemLibrary::PrintString(this, "Damage Taken. Health :" + FString::FromInt(CurrHealth - Dmg));
 		if ((CurrHealth - Dmg) <= 0)
 		{
 			Die();
@@ -140,6 +197,7 @@ void AENTCharacter::Die()
 	{
 		if (GM->CheckLossCondition()) { return; }
 	}
+	DeathAudioComponent->Play();
 	StopBaseAttack();
 	SetVulnerability(false);
 	SetActorHiddenInGame(true);
@@ -164,6 +222,7 @@ void AENTCharacter::Respawn()
 	}
 	SetActorLocation(FVector(CamLoc.X, CamLoc.Y, 0.0f));
 	Cast<AENTPlayerController>(GetController())->EnableController();
+	RespawnAudioComponent->Play();
 	GetWorld()->GetTimerManager().SetTimer(InvulnerableFlickerHandle, this, &AENTCharacter::ToggleSprite, InvulnerableFlickerRate, true);
 	GetWorld()->GetTimerManager().SetTimer(InvulnerableHanlde, this, &AENTCharacter::ComeOutOfInvulnerability, InvulnerableTimer, false);
 	if (UHealthWidget* HW = Cast<UHealthWidget>(HealthWidgetComp->GetUserWidgetObject()))
@@ -192,9 +251,9 @@ void AENTCharacter::ToggleSprite()
 
 void AENTCharacter::StartBaseAttack()
 {
-	if (!GetWorldTimerManager().IsTimerActive(BaseAttackHandle))
+	if (!GetWorldTimerManager().IsTimerActive(BaseAttackHandle) && bCanShoot)
 	{
-		GetWorld()->GetTimerManager().SetTimer(BaseAttackHandle, this, &AENTCharacter::FireBaseAttack, 1 / CurrBasicROF, true);
+		GetWorld()->GetTimerManager().SetTimer(BaseAttackHandle, this, &AENTCharacter::FireBaseAttack, 1 / CurrBasicROF, true, 0);
 		bIsShooting = true;
 	}
 }
@@ -204,8 +263,19 @@ void AENTCharacter::StopBaseAttack()
 	if (GetWorld())
 	{
 		GetWorldTimerManager().ClearTimer(BaseAttackHandle);
+		if (bIsShooting)
+		{
+			bCanShoot = false;
+			GetWorld()->GetTimerManager().SetTimer(BaseAttackCoodown, this, &AENTCharacter::ResetShootCooldown, 1 / CurrBasicROF, false);
+		}
+
 		bIsShooting = false;
 	}
+}
+
+void AENTCharacter::ResetShootCooldown()
+{
+	bCanShoot = true;
 }
 
 void AENTCharacter::FireBaseAttack()
@@ -216,6 +286,7 @@ void AENTCharacter::FireBaseAttack()
 	AENTProjectile* ProjectileActor = GetWorld()->SpawnActorDeferred<AENTProjectile>(Projectile, SpawnTransform);
 	ProjectileActor->SpawnSetup(ENTProjectileType::PlayerProjectile, CurrBasicDamage, CurrKnockBack);
 	ProjectileActor->FinishSpawning(SpawnTransform);
+	ShootingAudioComponent->Play();
 }
 
 void AENTCharacter::UseSpecial()

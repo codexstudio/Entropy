@@ -37,7 +37,21 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UWidgetComponent* HealthWidgetComp;
 
+	//Sounds
 	class UAudioComponent* DamageAudioComponent;
+	class USoundCue* DamageSoundCue;
+
+	class UAudioComponent* DeathAudioComponent;
+	class USoundCue* DeathSoundCue;
+
+	class UAudioComponent* RespawnAudioComponent;
+	class USoundCue* RespawnSoundCue;
+
+	class UAudioComponent* ShootingAudioComponent;
+	class USoundCue* ShootingSoundCue;
+
+	class UAudioComponent* PickupAudioComponent;
+	class USoundCue* PickupSoundCue;
 
 public:	
 	// Called every frame
@@ -163,8 +177,8 @@ public:
 
 	bool bIsSpecialReady;
 	bool bIsUsingSpecial;
-	bool bIsShooting;
 
+	bool bIsShooting;
 
 	virtual void UseSpecial();
 
@@ -182,7 +196,10 @@ public:
 protected:
 
 	void FireBaseAttack();
+	void ResetShootCooldown();
 	FTimerHandle BaseAttackHandle;
+	FTimerHandle BaseAttackCoodown;
+	bool bCanShoot = true;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
@@ -191,7 +208,5 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Health Widget")
 	TSubclassOf<class UUserWidget> HealthWidgetClass;
 
-protected:
-	class USoundCue* DamageSoundCue;
 };
 
