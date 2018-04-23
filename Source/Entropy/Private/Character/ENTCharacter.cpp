@@ -286,7 +286,7 @@ void AENTCharacter::FireBaseAttack()
 	const FRotator SpawnRotation = ArrowComponent->GetComponentRotation();
 	const FTransform SpawnTransform = FTransform(SpawnRotation, SpawnLocation);
 	AENTProjectile* ProjectileActor = GetWorld()->SpawnActorDeferred<AENTProjectile>(Projectile, SpawnTransform);
-	ProjectileActor->SpawnSetup(ENTProjectileType::PlayerProjectile, CurrBasicDamage, CurrKnockBack);
+	ProjectileActor->SpawnSetup(ENTProjectileType::PlayerProjectile, CurrBasicDamage, this, CurrKnockBack);
 	ProjectileActor->FinishSpawning(SpawnTransform);
 	ShootingAudioComponent->Play();
 }

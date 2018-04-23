@@ -44,12 +44,17 @@ void AENTProjectile::Tick(float DeltaTime)
 
 }
 
-void AENTProjectile::SpawnSetup(ENTProjectileType SpawningClassType, float Dmg, float KnockBack)
+void AENTProjectile::SpawnSetup(ENTProjectileType SpawningClassType, float Dmg, AENTCharacter* ShootingActor, float KnockBack)
 {
 	ProjectileType = SpawningClassType;
+
 	if (ProjectileType == ENTProjectileType::PlayerProjectile)
 	{
 		PaperSpriteComp->SetSprite(PlayerProjectileSprite);
+		if (ShootingActor)
+		{
+			ENTOwner = ShootingActor;
+		}
 		KnockBackOutput = KnockBack;
 	}
 	else if (ProjectileType == ENTProjectileType::EnemyProjectile)
@@ -67,7 +72,7 @@ void AENTProjectile::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 		AENTEnemy* EnemyRef = Cast<AENTEnemy>(OtherActor);
 		if (EnemyRef)
 		{
-			EnemyRef->ReceiveDamage(DamageOutput, KnockBackOutput, this->GetActorForwardVector());
+			EnemyRef->ReceiveDamage(DamageOutput, KnockBackOutput, this->GetActorForwardVector(), ENTOwner);
 			Destroy();
 		}
 		else

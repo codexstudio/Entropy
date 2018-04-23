@@ -34,7 +34,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SpawnSetup(ENTProjectileType SpawningClassType, float Dmg, float KnockBack);
+	FORCEINLINE class AENTCharacter* GetENTOwner() { return ENTOwner; }
+
+	void SpawnSetup(ENTProjectileType SpawningClassType, float Dmg, class AENTCharacter* ShootingActor = nullptr, float KnockBack = 0.0f);
 
 	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -43,6 +45,7 @@ protected:
 	float DamageOutput;
 	float KnockBackOutput = 0;
 
+	class AENTCharacter* ENTOwner;
 	ENTProjectileType ProjectileType;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Sprites)

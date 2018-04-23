@@ -29,6 +29,7 @@ protected:
 
 protected:
 	FName GetSharedCameraBlackboardKey() const;
+
 };
 
 FORCEINLINE FName UENTBTS_CheckPlayerNearby::GetSharedCameraBlackboardKey() const
