@@ -28,7 +28,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UFloatingPawnMovement* MyPawnMovement;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UPaperSpriteComponent* SpriteComponent;
 
 	UPROPERTY(VisibleAnywhere)
