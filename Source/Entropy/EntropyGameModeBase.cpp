@@ -10,8 +10,21 @@
 #include "Kismet/GameplayStatics.h"
 #include "ENTCharacter.h"
 #include "ENTGameInstance.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundCue.h"
+#include "ConstructorHelpers.h"
 
 static TAutoConsoleVariable<int32> CVarAllowLossConditionOverride(TEXT("dev.AllowLossCondition"), 1, TEXT("0 Disables loss condition. 1 Enables loss condition"), ECVF_SetByConsole);
+
+AEntropyGameModeBase::AEntropyGameModeBase()
+{
+	
+}
+
+void AEntropyGameModeBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+}
 
 void AEntropyGameModeBase::BeginPlay()
 {
