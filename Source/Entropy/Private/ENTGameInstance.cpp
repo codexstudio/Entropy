@@ -11,6 +11,7 @@
 
 void UENTGameInstance::SetLastSessionScore(int value)
 {
+	UKismetSystemLibrary::PrintString(this, "SetSessionScoreCalled");
 	SessionScore = value;
 	UpdateLeaderBoard();
 }

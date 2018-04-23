@@ -19,6 +19,7 @@ public:
 
 	bool GetIsStunned();
 	void SetIsStunned(bool value);
+	void SetLastAttacker(AActor* Attacker);
 	
 protected:
 	virtual void BeginPlay() override;

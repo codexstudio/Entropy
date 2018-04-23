@@ -29,7 +29,7 @@ public:
 
 	void SpawnSetup(float HealthInjection, int DamageInjection);
 
-	void ReceiveDamage(float Dmg, float KnockBackAmount, FVector KnockbackDirection);
+	void ReceiveDamage(float Dmg, float KnockBackAmount, FVector KnockbackDirection, class AENTCharacter* Attacker = nullptr);
 
 protected:
 	UFUNCTION()
@@ -56,7 +56,6 @@ protected:
 
 	const float MaxDistanceFromCamera = 22052.8f;
 
-	const float StunTimer = 0.1f;
 	FTimerHandle StunHandle;
 	FTimerHandle DeathHandle;
 
