@@ -41,7 +41,38 @@ public:
 	ENTCharacterClass CharacterClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UPaperSprite* PaperSprite;
+	class UPaperSprite* BlueSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperSprite* RedSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperSprite* GreenSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperSprite* PinkSprite;
+};
+
+USTRUCT(Blueprintable)
+struct FCharacterSpriteData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ENTCharacterClass CharacterClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperSprite* BlueSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperSprite* RedSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperSprite* GreenSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperSprite* PinkSprite;
 };
 
 USTRUCT(Blueprintable)
