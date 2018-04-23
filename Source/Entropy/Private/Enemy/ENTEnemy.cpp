@@ -135,9 +135,9 @@ void AENTEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void AENTEnemy::ReceiveDamage(float Dmg, float KnockBackAmount, FVector KnockbackDirection)
+void AENTEnemy::ReceiveDamage(float Dmg, float KnockBackAmount, FVector KnockbackDirection, AENTCharacter* Attacker)
 {
-	if ((CurrHealth - Dmg) <= 0) 
+	if ((CurrHealth - Dmg) <= 0)
 	{
 		Die();
 	}
@@ -146,12 +146,11 @@ void AENTEnemy::ReceiveDamage(float Dmg, float KnockBackAmount, FVector Knockbac
 		TakeDamageAudioComponent->Play();
 		CurrHealth -= Dmg;
 		ToggleStunned();
-		FVector KnockBackNorm = (KnockbackDirection.GetSafeNormal());
-		FVector KnockBack = KnockBackNorm * KnockBackAmount;
-		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("KnockbackAmount: %f"), KnockBackAmount));
-		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("KnockbackSize: %f"), KnockBack.Size()));
-		FPMovComponent->Velocity = KnockBack;
-		GetWorld()->GetTimerManager().SetTimer(StunHandle, this, &AENTEnemy::ToggleStunned, StunTimer, false);
+		if (AENTAIController* AICon = Cast<AENTAIController>(GetController()))
+		{
+			AICon->SetLastAttacker(Attacker);
+		}
+		GetWorld()->GetTimerManager().SetTimer(StunHandle, this, &AENTEnemy::ToggleStunned, KnockBackAmount / 100, false);
 	}
 }
 
@@ -159,15 +158,15 @@ void AENTEnemy::ToggleStunned()
 {
 	if (AENTAIController* AICon = Cast<AENTAIController>(GetController()))
 	{
+		AICon->SetIsStunned(!AICon->GetIsStunned());
 		if (AICon->GetIsStunned())
 		{
-			FPMovComponent->MaxSpeed = 600.0f;
+			FPMovComponent->MaxSpeed = 0.0f;
 		} 
 		else
 		{
-			FPMovComponent->MaxSpeed = 20000.0f;
+			FPMovComponent->MaxSpeed = 600.0f;
 		}
-		AICon->SetIsStunned(!AICon->GetIsStunned());
 	}
 }
 

@@ -66,3 +66,8 @@ void AENTAIController::SetIsStunned(bool value)
 	GetBlackboardComponent()->SetValueAsBool("IsStunned", value);
 }
 
+void AENTAIController::SetLastAttacker(AActor* Attacker)
+{
+	GetBlackboardComponent()->SetValueAsObject("LastAttacker", Attacker);
+}
+
