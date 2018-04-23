@@ -42,12 +42,32 @@ AENTEnemy::AENTEnemy()
 	DeathAudioComponent->bAutoActivate = false;
 	DeathAudioComponent->SetupAttachment(RootComponent);
 
+	TakeDamageAudioComponent = CreateDefaultSubobject<UAudioComponent>("Take Damage Audio Component");
+	TakeDamageAudioComponent->bAutoActivate = false;
+	TakeDamageAudioComponent->SetupAttachment(RootComponent);
+
+	ShootingAudioComponent = CreateDefaultSubobject<UAudioComponent>("Shooting Audio Component");
+	ShootingAudioComponent->bAutoActivate = false;
+	ShootingAudioComponent->SetupAttachment(RootComponent);
+
 	static ConstructorHelpers::FObjectFinder<USoundCue> DeathCue
 	{
-		TEXT("'/Game/Sound/SoundCue_EnemyDeath.SoundCue_EnemyDeath'")
+		TEXT("'/Game/Sound/Real_Sounds/Sound_Cues/Enemy_Death_Sound_Cue.Enemy_Death_Sound_Cue'")
+	};
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> DamageCue
+	{
+		TEXT("'/Game/Sound/Real_Sounds/Sound_Cues/Enemy_Hit_Sound_Cue.Enemy_Hit_Sound_Cue'")
+	};
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> ShootingCue
+	{
+		TEXT("'/Game/Sound/Real_Sounds/Sound_Cues/Shooting_Sound_2_Cue.Shooting_Sound_2_Cue'")
 	};
 
 	DeathSoundCue = DeathCue.Object;
+	TakeDamageSoundCue = DamageCue.Object;
+	ShootingSoundCue = ShootingCue.Object;
 
 	CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AENTEnemy::OnCollisionEnter);
 }
@@ -60,9 +80,14 @@ void AENTEnemy::PostInitializeComponents()
 	{
 		DeathAudioComponent->SetSound(DeathSoundCue);
 	}
-
-	//DeathAudioComponent->OnAudioFinishedNative.AddDynamic(this, &APawn::Destroy());
-	//DeathAudioComponent->OnAudioFinishedNative.AddUFunction(this, &AENTEnemy::Destroy());
+	if (TakeDamageSoundCue->IsValidLowLevelFast())
+	{
+		TakeDamageAudioComponent->SetSound(TakeDamageSoundCue);
+	}
+	if (ShootingSoundCue->IsValidLowLevelFast())
+	{
+		ShootingAudioComponent->SetSound(ShootingSoundCue);
+	}
 }
 
 void AENTEnemy::SpawnSetup(float HealthInjection, int DamageInjection)
@@ -112,13 +137,13 @@ void AENTEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AENTEnemy::ReceiveDamage(float Dmg, float KnockBackAmount, FVector KnockbackDirection)
 {
-	UKismetSystemLibrary::PrintString(this, "Enemy Taking Fire!!!");
 	if ((CurrHealth - Dmg) <= 0) 
 	{
 		Die();
 	}
 	else 
 	{
+		TakeDamageAudioComponent->Play();
 		CurrHealth -= Dmg;
 		ToggleStunned();
 		FVector KnockBackNorm = (KnockbackDirection.GetSafeNormal());
@@ -146,12 +171,20 @@ void AENTEnemy::ToggleStunned()
 	}
 }
 
+void AENTEnemy::DelayedDestroy()
+{
+	Destroy();
+}
+
 void AENTEnemy::Die(bool DiedToPlayer)
 {
+	if (GameMode)
+	{
+		GameMode->EnemyDied(DiedToPlayer);
+	}
 	if (DiedToPlayer)
 	{
-		//DeathAudioComponent->Play();
-		UKismetSystemLibrary::PrintString(this, "Enemy Down!!!");
+		DeathAudioComponent->Play();
 		float RandNum = FMath::RandRange(0.0f, 100.0f);
 		if (RandNum <= ChanceToDropPickup)
 		{
@@ -160,12 +193,14 @@ void AENTEnemy::Die(bool DiedToPlayer)
 			FActorSpawnParameters SpawnInfo;
 			GetWorld()->SpawnActor<AENTPickup>(PickupClass, SpawnLocation, SpawnRotation, SpawnInfo);
 		}
+		SetActorHiddenInGame(true);
+		SetActorEnableCollision(false);
+		GetWorld()->GetTimerManager().SetTimer(DeathHandle, this, &AENTEnemy::DelayedDestroy, DeathSoundCue->GetDuration(), false);
 	}
-	if (GameMode)
+	else
 	{
-		GameMode->EnemyDied(DiedToPlayer);
+		Destroy();
 	}
-	Destroy();
 }
 
 void AENTEnemy::OnCollisionEnter(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
