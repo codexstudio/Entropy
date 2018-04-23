@@ -148,7 +148,9 @@ void AENTCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AENTCharacter::OnControllerConnectionChange_Implementation(bool Connected, int32 UserID, int32 ControllerID)
 {
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Connection change id: x: %d, connected: %s"), ControllerID, (Connected ? TEXT("true") : TEXT("false"))));
+	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Connection change id: x: %d, connected: %s"), ControllerID, (Connected ? TEXT("false") : TEXT("true"))));
+
+
 }
 
 // Called every frame
