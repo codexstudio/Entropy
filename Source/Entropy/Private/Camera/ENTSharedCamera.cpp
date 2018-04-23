@@ -41,12 +41,21 @@ void AENTSharedCamera::BeginPlay()
 FVector AENTSharedCamera::CalcCameraPosition()
 {
 	FVector CameraLoc(ForceInitToZero);
-	for (const AActor* Player : Players)
+	int PlayersAlive = 0;
+	for (AActor* Player : Players)
 	{
-		CameraLoc += Player->GetActorLocation();
+		AENTCharacter* CharRef = Cast<AENTCharacter>(Player);
+		if (CharRef)
+		{
+			if (!CharRef->IsDead())
+			{
+				PlayersAlive++;
+				CameraLoc += Player->GetActorLocation();
+			}
+		}
 	}
 	
-	CameraLoc /= Players.Num();
+	CameraLoc /= PlayersAlive;
 	return CameraLoc;
 }
 

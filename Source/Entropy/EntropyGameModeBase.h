@@ -58,6 +58,7 @@ protected:
 	int EnemiesKilled = 0;
 
 	float EnemyGlobalHealthBoost = 0;
+	float EnemyGlobalSpeedBoost = 0;
 	int EnemyGlobalDamageBoost = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Spawning)

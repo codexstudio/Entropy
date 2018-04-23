@@ -33,7 +33,7 @@ AENTEnemy::AENTEnemy()
 	SpriteComponent->RelativeRotation = (FRotator(0, -90, 90));
 
 	FPMovComponent = CreateDefaultSubobject<UFloatingPawnMovement>("Floating Pawn Movement");
-	FPMovComponent->MaxSpeed = 600.0f;
+	FPMovComponent->MaxSpeed = StartSpeed;
 	FPMovComponent->Acceleration = 10000000.0f;
 	FPMovComponent->Deceleration = 0.0f;
 	FPMovComponent->TurningBoost = 8.0f;
@@ -90,10 +90,11 @@ void AENTEnemy::PostInitializeComponents()
 	}
 }
 
-void AENTEnemy::SpawnSetup(float HealthInjection, int DamageInjection)
+void AENTEnemy::SpawnSetup(float HealthInjection, int DamageInjection, float SpeedInjection)
 {
 	StartHealth += HealthInjection;
 	DamageOutput += DamageInjection;
+	BonusSpeed = SpeedInjection;
 }
 
 // Called when the game starts or when spawned
@@ -102,6 +103,14 @@ void AENTEnemy::BeginPlay()
 	Super::BeginPlay();
 	
 	CurrHealth = StartHealth;
+	if (StartSpeed + BonusSpeed <= TopSpeed)
+	{
+		FPMovComponent->MaxSpeed = StartSpeed + BonusSpeed;
+	}
+	else
+	{
+		FPMovComponent->MaxSpeed = TopSpeed;
+	}
 
 	GameMode = (GetWorld() != nullptr) ? GetWorld()->GetAuthGameMode<AEntropyGameModeBase>() : nullptr;
 }
@@ -165,7 +174,14 @@ void AENTEnemy::ToggleStunned()
 		} 
 		else
 		{
-			FPMovComponent->MaxSpeed = 600.0f;
+			if (StartSpeed + BonusSpeed <= TopSpeed)
+			{
+				FPMovComponent->MaxSpeed = StartSpeed + BonusSpeed;
+			}
+			else
+			{
+				FPMovComponent->MaxSpeed = TopSpeed;
+			}
 		}
 	}
 }

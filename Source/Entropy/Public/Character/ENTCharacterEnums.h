@@ -97,6 +97,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How much additional health enemies get on top of their starting health."))
 	float EnemyHealthIncrement;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How much additional speed enemies get on top of their starting speed."))
+	float EnemySpeedIncrement;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How much additional damage enemies output on top of their starting damage."))
 	int EnemyDamageOutputIncrement;
 

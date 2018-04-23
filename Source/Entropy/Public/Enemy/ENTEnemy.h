@@ -27,7 +27,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	void SpawnSetup(float HealthInjection, int DamageInjection);
+	void SpawnSetup(float HealthInjection, int DamageInjection, float SpeedInjection);
 
 	void ReceiveDamage(float Dmg, float KnockBackAmount, FVector KnockbackDirection, class AENTCharacter* Attacker = nullptr);
 
@@ -49,12 +49,20 @@ protected:
 	float StartHealth;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	float StartSpeed;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	float TopSpeed;
+
+	float BonusSpeed = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	int DamageOutput;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	float ChanceToDropPickup;
 
-	const float MaxDistanceFromCamera = 22052.8f;
+	const float MaxDistanceFromCamera = 20000.0f;
 
 	FTimerHandle StunHandle;
 	FTimerHandle DeathHandle;
