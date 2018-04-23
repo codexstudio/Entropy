@@ -13,6 +13,7 @@
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 #include "ConstructorHelpers.h"
+#include "ENTLocalPlayer.h"
 
 static TAutoConsoleVariable<int32> CVarAllowLossConditionOverride(TEXT("dev.AllowLossCondition"), 1, TEXT("0 Disables loss condition. 1 Enables loss condition"), ECVF_SetByConsole);
 
@@ -52,7 +53,7 @@ void AEntropyGameModeBase::SetSharedCamera(AENTSharedCamera* InSharedCamera)
 {
 	SharedCamera = InSharedCamera;
 
-	MinSpawnOffset = SharedCamera->GetOrthoWidth() * 1.05f;
+	MinSpawnOffset = SharedCamera->GetOrthoWidth() * 0.9f;
 	MaxSpawnOffset = MinSpawnOffset * 1.5f;
 
 	while (EnemiesInPlay < MaxEnemiesInPlay)
@@ -91,6 +92,54 @@ bool AEntropyGameModeBase::CheckLossCondition()
 	GameOver();
 	return true;
 }
+ENTColor AEntropyGameModeBase::GetColorForPlayer(int PlayerID) const
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, PlayerID);
+	if (PC == nullptr) return ENTColor::NONE;
+
+	if (UENTLocalPlayer* LocalPlayer = Cast<UENTLocalPlayer>(PC->GetLocalPlayer()))
+	{
+		return LocalPlayer->PlayerColor;
+	}
+	return ENTColor::NONE;
+}
+
+ENTCharacterClass AEntropyGameModeBase::GetCharacterClassForPlayer(int PlayerID) const
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, PlayerID);
+	if (PC == nullptr) return ENTCharacterClass::NONE;
+
+	if (UENTLocalPlayer* LocalPlayer = Cast<UENTLocalPlayer>(PC->GetLocalPlayer()))
+	{
+		return LocalPlayer->PlayerClass;
+	}
+	return ENTCharacterClass::NONE;
+}
+
+UPaperSprite* AEntropyGameModeBase::GetSpriteForPlayer(int PlayerID) const
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, PlayerID);
+	if (PC == nullptr) return nullptr;
+
+	if (UENTLocalPlayer* LocalPlayer = Cast<UENTLocalPlayer>(PC->GetLocalPlayer()))
+	{
+		if (CharacterDataTable)
+		{
+			FName ClassName = EnumToFName("ENTCharacterClass", LocalPlayer->PlayerClass);
+			FCharacterSpriteData* Row = CharacterDataTable->FindRow<FCharacterSpriteData>(ClassName, TEXT(""));
+
+			if (LocalPlayer->PlayerColor == ENTColor::Blue)
+				return Row->BlueSprite;
+			else if (LocalPlayer->PlayerColor == ENTColor::Red)
+				return Row->RedSprite;
+			else if (LocalPlayer->PlayerColor == ENTColor::Green)
+				return Row->GreenSprite;
+			else
+				return Row->PinkSprite;
+		}
+	}
+	return nullptr;
+}
 
 void AEntropyGameModeBase::GameOver()
 {
@@ -121,7 +170,7 @@ void AEntropyGameModeBase::SpawnClusterOfEnemies()
 		const FTransform SpawnTrans = FTransform(SpawnRotation, SpawnPositionPlusOffset);
 
 		AENTEnemy* EnemyActor = GetWorld()->SpawnActorDeferred<AENTEnemy>(EnemyClass, SpawnTrans);
-		EnemyActor->SpawnSetup(EnemyGlobalHealthBoost, EnemyGlobalDamageBoost);
+		EnemyActor->SpawnSetup(EnemyGlobalHealthBoost, EnemyGlobalDamageBoost, EnemyGlobalSpeedBoost);
 		EnemyActor->FinishSpawning(SpawnTrans);
 	}
 
@@ -140,6 +189,7 @@ void AEntropyGameModeBase::AttemptToScaleDifficulty()
 		if (RowNumPlayers && EnemiesKilled != 0 && RowNumPlayers->EnemiesKilledPerScale != 0 && EnemiesKilled % RowNumPlayers->EnemiesKilledPerScale == 0)
 		{
 			EnemyGlobalHealthBoost += RowNumPlayers->EnemyHealthIncrement;
+			EnemyGlobalSpeedBoost += RowNumPlayers->EnemySpeedIncrement;
 			EnemyGlobalDamageBoost += RowNumPlayers->EnemyDamageOutputIncrement;
 			MaxEnemiesInPlay += RowNumPlayers->MaxEnemyIncrement;
 			MinEnemyClusterAmount += RowNumPlayers->MinClusterIncrement;

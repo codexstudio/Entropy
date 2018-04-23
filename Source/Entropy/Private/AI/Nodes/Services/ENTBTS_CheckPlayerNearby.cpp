@@ -4,6 +4,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AI/ENTAIController.h"
 #include "Camera/ENTSharedCamera.h"
+#include "ENTCharacter.h"
 
 void UENTBTS_CheckPlayerNearby::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
@@ -19,16 +20,23 @@ void UENTBTS_CheckPlayerNearby::TickNode(UBehaviorTreeComponent& OwnerComp, uint
 				AActor* ClosestPlayer = nullptr;
 				float ClosestDistance = 0.0f;
 
-				for (const auto& Player : SharedCamera->GetPlayers())
+				for (auto& Player : SharedCamera->GetPlayers())
 				{
-					const float CurrDistance = FVector::Dist2D(AIActor->GetActorLocation(), Player->GetActorLocation());
-
-					if (CurrDistance < MaxCheckDistance)
+					AENTCharacter* CharRef = Cast<AENTCharacter>(Player);
+					if (CharRef)
 					{
-						if (!ClosestPlayer || (ClosestPlayer && CurrDistance < ClosestDistance))
+						if (!CharRef->IsDead())
 						{
-							ClosestPlayer = Player;
-							ClosestDistance = CurrDistance;
+							const float CurrDistance = FVector::Dist2D(AIActor->GetActorLocation(), Player->GetActorLocation());
+
+							if (CurrDistance < MaxCheckDistance)
+							{
+								if (!ClosestPlayer || (ClosestPlayer && CurrDistance < ClosestDistance))
+								{
+									ClosestPlayer = Player;
+									ClosestDistance = CurrDistance;
+								}
+							}
 						}
 					}
 				}

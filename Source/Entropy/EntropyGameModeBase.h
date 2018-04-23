@@ -32,6 +32,14 @@ public:
 
 	bool CheckLossCondition();
 
+	UFUNCTION(BlueprintPure)
+	ENTColor GetColorForPlayer(int PlayerID) const;
+
+	UFUNCTION(BlueprintPure)
+	ENTCharacterClass GetCharacterClassForPlayer(int PlayerID) const;
+
+	UFUNCTION(BlueprintPure)
+	class UPaperSprite* GetSpriteForPlayer(int PlayerID) const;
 protected:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
@@ -50,6 +58,7 @@ protected:
 	int EnemiesKilled = 0;
 
 	float EnemyGlobalHealthBoost = 0;
+	float EnemyGlobalSpeedBoost = 0;
 	int EnemyGlobalDamageBoost = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Spawning)
@@ -70,8 +79,12 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UDataTable* ScalingDataTable;
 
+	UPROPERTY(EditAnywhere)
+	UDataTable* CharacterDataTable;
+
 	float MinSpawnOffset;
 	float MaxSpawnOffset;
 
 	const float ClusterOffsetRange = 700.0f;
+
 };

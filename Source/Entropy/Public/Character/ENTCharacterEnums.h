@@ -6,7 +6,7 @@
 #include "Engine/DataTable.h"
 #include "ENTCharacterEnums.generated.h"
 
-UENUM()
+UENUM(BlueprintType)
 enum class ENTCharacterClass : uint8
 {
 	Assassin,
@@ -21,6 +21,16 @@ enum class ENTProjectileType : uint8
 {
 	PlayerProjectile,
 	EnemyProjectile,
+	NONE
+};
+
+UENUM(BlueprintType)
+enum class ENTColor : uint8
+{
+	Blue,
+	Red,
+	Green,
+	Pink,
 	NONE
 };
 
@@ -41,7 +51,38 @@ public:
 	ENTCharacterClass CharacterClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UPaperSprite* PaperSprite;
+	class UPaperSprite* BlueSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperSprite* RedSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperSprite* GreenSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperSprite* PinkSprite;
+};
+
+USTRUCT(Blueprintable)
+struct FCharacterSpriteData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ENTCharacterClass CharacterClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperSprite* BlueSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperSprite* RedSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperSprite* GreenSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperSprite* PinkSprite;
 };
 
 USTRUCT(Blueprintable)
@@ -55,6 +96,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How much additional health enemies get on top of their starting health."))
 	float EnemyHealthIncrement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How much additional speed enemies get on top of their starting speed."))
+	float EnemySpeedIncrement;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How much additional damage enemies output on top of their starting damage."))
 	int EnemyDamageOutputIncrement;
