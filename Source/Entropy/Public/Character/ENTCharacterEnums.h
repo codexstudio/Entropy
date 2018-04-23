@@ -6,7 +6,7 @@
 #include "Engine/DataTable.h"
 #include "ENTCharacterEnums.generated.h"
 
-UENUM()
+UENUM(BlueprintType)
 enum class ENTCharacterClass : uint8
 {
 	Assassin,
@@ -21,6 +21,16 @@ enum class ENTProjectileType : uint8
 {
 	PlayerProjectile,
 	EnemyProjectile,
+	NONE
+};
+
+UENUM(BlueprintType)
+enum class ENTColor : uint8
+{
+	Blue,
+	Red,
+	Green,
+	Pink,
 	NONE
 };
 

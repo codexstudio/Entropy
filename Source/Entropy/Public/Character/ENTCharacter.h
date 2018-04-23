@@ -15,6 +15,10 @@ class ENTROPY_API AENTCharacter : public APawn
 public:
 	// Sets default values for this pawn's properties
 	AENTCharacter();
+
+	UFUNCTION(BlueprintCallable)
+	void SetSprite(class UPaperSprite* Sprite);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -136,6 +140,7 @@ protected:
 	//Knock back Amount
 	UPROPERTY(BlueprintReadOnly)
 	float CurrKnockBack;
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	float StartKnockBack;

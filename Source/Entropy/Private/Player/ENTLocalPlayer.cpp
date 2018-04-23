@@ -2,6 +2,10 @@
 
 #include "ENTLocalPlayer.h"
 
+void UENTLocalPlayer::PlayerAdded(class UGameViewportClient* InViewportClient, int32 InControllerID)
+{
+	Super::PlayerAdded(InViewportClient, InControllerID);
 
-
-
+	PlayerClass = ENTCharacterClass::NONE;
+	PlayerColor = ENTColor::Blue;
+}

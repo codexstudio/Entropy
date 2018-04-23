@@ -16,8 +16,10 @@ class ENTROPY_API UENTLocalPlayer : public ULocalPlayer
 	GENERATED_BODY()
 	
 public:
+	virtual void PlayerAdded(class UGameViewportClient* InViewportClient, int32 InControllerID) override;
+
 	UPROPERTY(BlueprintReadWrite)
-	FColor PlayerColor;
+	ENTColor PlayerColor;
 	
 	UPROPERTY(BlueprintReadWrite)
 	ENTCharacterClass PlayerClass;

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "ENTCharacterEnums.h"
 #include "ENTPlayerSelectWidget.generated.h"
 
 /**
@@ -28,5 +29,12 @@ protected:
 	FSlateBrush GetPlayerFourImage() const;
 
 	UPROPERTY(EditAnywhere)
-	class UDataTable* DataTable;
+	UDataTable* DataTable;
+
+protected:
+	UFUNCTION(BlueprintPure)
+	ENTCharacterClass GetCharacterClassForPlayer(int PlayerID) const;
+
+	class UPaperSprite* GetSpriteForPlayer(int PlayerID) const;
+	FSlateBrush MakeBrushFromSprite(UPaperSprite* Sprite, int32 Width, int32 Height) const;
 };

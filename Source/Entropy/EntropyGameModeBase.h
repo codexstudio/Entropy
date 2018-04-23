@@ -32,6 +32,14 @@ public:
 
 	bool CheckLossCondition();
 
+	UFUNCTION(BlueprintPure)
+	ENTColor GetColorForPlayer(int PlayerID) const;
+
+	UFUNCTION(BlueprintPure)
+	ENTCharacterClass GetCharacterClassForPlayer(int PlayerID) const;
+
+	UFUNCTION(BlueprintPure)
+	class UPaperSprite* GetSpriteForPlayer(int PlayerID) const;
 protected:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
@@ -70,8 +78,12 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UDataTable* ScalingDataTable;
 
+	UPROPERTY(EditAnywhere)
+	UDataTable* CharacterDataTable;
+
 	float MinSpawnOffset;
 	float MaxSpawnOffset;
 
 	const float ClusterOffsetRange = 700.0f;
+
 };
