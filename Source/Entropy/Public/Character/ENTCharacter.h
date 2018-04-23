@@ -146,7 +146,7 @@ protected:
 protected:
 	bool bIsDead = false;
 	bool Vulnerable = true;
-	const float DeathTimer = 5.0f;
+	const float DeathTimer = 20.0f;
 	const float InvulnerableTimer = 3.0f;
 	const float InvulnerableFlickerRate = 0.2f;
 	FTimerHandle DeathHandle;
@@ -155,9 +155,9 @@ protected:
 
 	//Stat Increments
 	const int BaseHealthIncrement = 1;
-	const float BaseMovSpeedIncrement = 100.0f;
-	const float BaseDamageIncrement = 0.2f;
-	const float BaseROFIncrement = 0.1f;
+	const float BaseMovSpeedIncrement = 50.0f;
+	const float BaseDamageIncrement = 0.1f;
+	const float BaseROFIncrement = 0.05f;
 	const float BaseKnockBackIncrement = 0.1f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)

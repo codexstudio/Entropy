@@ -52,7 +52,7 @@ void AEntropyGameModeBase::SetSharedCamera(AENTSharedCamera* InSharedCamera)
 {
 	SharedCamera = InSharedCamera;
 
-	MinSpawnOffset = SharedCamera->GetOrthoWidth() * 1.05f;
+	MinSpawnOffset = SharedCamera->GetOrthoWidth() * 0.9f;
 	MaxSpawnOffset = MinSpawnOffset * 1.5f;
 
 	while (EnemiesInPlay < MaxEnemiesInPlay)
@@ -121,7 +121,7 @@ void AEntropyGameModeBase::SpawnClusterOfEnemies()
 		const FTransform SpawnTrans = FTransform(SpawnRotation, SpawnPositionPlusOffset);
 
 		AENTEnemy* EnemyActor = GetWorld()->SpawnActorDeferred<AENTEnemy>(EnemyClass, SpawnTrans);
-		EnemyActor->SpawnSetup(EnemyGlobalHealthBoost, EnemyGlobalDamageBoost);
+		EnemyActor->SpawnSetup(EnemyGlobalHealthBoost, EnemyGlobalDamageBoost, EnemyGlobalSpeedBoost);
 		EnemyActor->FinishSpawning(SpawnTrans);
 	}
 
@@ -140,6 +140,7 @@ void AEntropyGameModeBase::AttemptToScaleDifficulty()
 		if (RowNumPlayers && EnemiesKilled != 0 && RowNumPlayers->EnemiesKilledPerScale != 0 && EnemiesKilled % RowNumPlayers->EnemiesKilledPerScale == 0)
 		{
 			EnemyGlobalHealthBoost += RowNumPlayers->EnemyHealthIncrement;
+			EnemyGlobalSpeedBoost += RowNumPlayers->EnemySpeedIncrement;
 			EnemyGlobalDamageBoost += RowNumPlayers->EnemyDamageOutputIncrement;
 			MaxEnemiesInPlay += RowNumPlayers->MaxEnemyIncrement;
 			MinEnemyClusterAmount += RowNumPlayers->MinClusterIncrement;
