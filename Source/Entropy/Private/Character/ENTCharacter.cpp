@@ -172,8 +172,9 @@ void AENTCharacter::ReceiveDamage(uint32 Dmg)
 	if (Vulnerable) 
 	{
 		//UKismetSystemLibrary::PrintString(this, "Damage Taken. Health :" + FString::FromInt(CurrHealth - Dmg));
-		if ((CurrHealth - Dmg) <= 0)
+		if ((CurrHealth - Dmg) <= 0 && !bIsDead)
 		{
+			UKismetSystemLibrary::PrintString(this, "Health reduced below 0");
 			Die();
 		}
 		else
@@ -195,6 +196,7 @@ void AENTCharacter::Die()
 	AEntropyGameModeBase* const GM = (GetWorld() != nullptr) ? GetWorld()->GetAuthGameMode<AEntropyGameModeBase>() : nullptr;
 	if (GM)
 	{
+		UKismetSystemLibrary::PrintString(this, "Calling check loss condition");
 		if (GM->CheckLossCondition()) { return; }
 	}
 	DeathAudioComponent->Play();

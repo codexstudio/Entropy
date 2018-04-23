@@ -74,6 +74,7 @@ bool AEntropyGameModeBase::CheckLossCondition()
 			if (!ENTChar->IsDead()) { return false; }
 		}
 	}
+	UKismetSystemLibrary::PrintString(this, "Calling game over");
 	GameOver();
 	return true;
 }
@@ -83,6 +84,7 @@ void AEntropyGameModeBase::GameOver()
 	UENTGameInstance* GameIns = Cast<UENTGameInstance>(GetGameInstance());
 	if (GameIns)
 	{
+		UKismetSystemLibrary::PrintString(this, "Calling SetSessionScore");
 		GameIns->SetLastSessionScore(EnemiesKilled);
 	}
 	UGameplayStatics::OpenLevel(this, FName("GameOverMenu"));
