@@ -62,6 +62,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	float ChanceToDropPickup;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	float ChanceToGoRetard = 0;
+
 	const float MaxDistanceFromCamera = 20000.0f;
 
 	FTimerHandle StunHandle;

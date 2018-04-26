@@ -11,6 +11,7 @@
 #include "Camera/ENTSharedCamera.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "EngineUtils.h"
+#include "ENTEnemy.h"
 
 AENTAIController::AENTAIController()
 {
@@ -33,7 +34,6 @@ void AENTAIController::BeginPlay()
 		UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), "quit");
 	}
 #endif
-
 	RunBehaviorTree(BehaviorTreeClass);
 
 	AEntropyGameModeBase* const GM = (GetWorld() != nullptr) ? GetWorld()->GetAuthGameMode<AEntropyGameModeBase>() : nullptr;

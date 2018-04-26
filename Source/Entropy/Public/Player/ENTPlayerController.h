@@ -42,6 +42,7 @@ protected:
 	void UseSpecial();
 
 protected:
+	UPROPERTY()
 	class AENTCharacter* PlayerCharacter;
 
 	FString GamerTag = "";

@@ -14,6 +14,7 @@
 #include "Sound/SoundCue.h"
 #include "ConstructorHelpers.h"
 #include "ENTAIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 // Sets default values
 AENTEnemy::AENTEnemy()
@@ -113,6 +114,23 @@ void AENTEnemy::BeginPlay()
 	}
 
 	GameMode = (GetWorld() != nullptr) ? GetWorld()->GetAuthGameMode<AEntropyGameModeBase>() : nullptr;
+
+	float RandNum = FMath::RandRange(0.0f, 100.0f);
+	if ((RandNum <= ChanceToGoRetard))
+	{
+		if (GetController())
+		{
+			AENTAIController* AICon = Cast<AENTAIController>(GetController());
+			if (AICon && GameMode)
+			{
+				AICon->GetBlackboardComponent()->SetValueAsBool("Disabled", true);
+				//UKismetSystemLibrary::PrintString(this, "Speed :" + FString::SanitizeFloat(FPMovComponent->GetMaxSpeed()));
+				FVector Dir = GameMode->GetSharedCamera()->GetActorLocation() - GetActorLocation();
+				Dir.Normalize();
+				FPMovComponent->Velocity = Dir * FPMovComponent->GetMaxSpeed();
+			}
+		}
+	}
 }
 
 // Called every frame
@@ -146,7 +164,7 @@ void AENTEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AENTEnemy::ReceiveDamage(float Dmg, float KnockBackAmount, FVector KnockbackDirection, AENTCharacter* Attacker)
 {
-	if ((CurrHealth - Dmg) <= 0)
+	if ((CurrHealth - Dmg) <= 0.0f)
 	{
 		Die();
 	}
@@ -154,10 +172,12 @@ void AENTEnemy::ReceiveDamage(float Dmg, float KnockBackAmount, FVector Knockbac
 	{
 		TakeDamageAudioComponent->Play();
 		CurrHealth -= Dmg;
+		FPMovComponent->Velocity = FVector(0.0f, 0.0f, 0.0f);
 		ToggleStunned();
 		if (AENTAIController* AICon = Cast<AENTAIController>(GetController()))
 		{
 			AICon->SetLastAttacker(Attacker);
+			AICon->GetBlackboardComponent()->SetValueAsBool("Disabled", false);
 		}
 		GetWorld()->GetTimerManager().SetTimer(StunHandle, this, &AENTEnemy::ToggleStunned, KnockBackAmount / 100, false);
 	}

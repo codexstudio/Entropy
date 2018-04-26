@@ -172,19 +172,20 @@ void AENTCharacter::ApplyPickup(ENTCharacterClass PickupClass)
 	AddToCurrKnockBack((GetCharacterClass() == ENTCharacterClass::Bruiser && PickupClass == GetCharacterClass()) ? SpecializedStatIncrement : BaseKnockBackIncrement);
 }
 
-void AENTCharacter::ReceiveDamage(uint32 Dmg)
+void AENTCharacter::ReceiveDamage(int dmg)
 {
 	if (Vulnerable) 
 	{
-		//UKismetSystemLibrary::PrintString(this, "Damage Taken. Health :" + FString::FromInt(CurrHealth - Dmg));
-		if ((CurrHealth - Dmg) <= 0 && !bIsDead)
+		UKismetSystemLibrary::PrintString(this, bIsDead ? "dead" : "not dead.");
+		UKismetSystemLibrary::PrintString(this, "Damage Taken. Health :" + FString::FromInt(CurrHealth - dmg));
+		if ((CurrHealth - dmg) <= 0 && !bIsDead)
 		{
 			UKismetSystemLibrary::PrintString(this, "Health reduced below 0");
 			Die();
 		}
 		else
 		{
-			CurrHealth -= Dmg;
+			CurrHealth -= dmg;
 		}
 
 		if (UHealthWidget* HW = Cast<UHealthWidget>(HealthWidgetComp->GetUserWidgetObject()))
