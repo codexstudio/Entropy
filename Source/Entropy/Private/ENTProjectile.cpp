@@ -85,7 +85,7 @@ void AENTProjectile::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 		AENTCharacter* CharRef = Cast<AENTCharacter>(OtherActor);
 		if (CharRef)
 		{
-			CharRef->ReceiveDamage((uint32)DamageOutput);
+			CharRef->ReceiveDamage((int)DamageOutput);
 			Destroy();
 		}
 		else

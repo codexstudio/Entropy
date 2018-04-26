@@ -80,7 +80,7 @@ public:
 	void ApplyPickup(ENTCharacterClass PickupClass);
 
 	//Damage
-	void ReceiveDamage(uint32 dmg);
+	void ReceiveDamage(int dmg);
 
 	FORCEINLINE bool IsDead() { return bIsDead; }
 

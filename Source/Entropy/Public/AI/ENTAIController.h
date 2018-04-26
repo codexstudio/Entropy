@@ -31,4 +31,6 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category = AI)
 	class UBehaviorTree* BehaviorTreeClass;
+
+	
 };
