@@ -13,6 +13,7 @@
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 #include "ConstructorHelpers.h"
+#include "ENTLocalPlayer.h"
 
 static TAutoConsoleVariable<int32> CVarAllowLossConditionOverride(TEXT("dev.AllowLossCondition"), 1, TEXT("0 Disables loss condition. 1 Enables loss condition"), ECVF_SetByConsole);
 
@@ -90,6 +91,54 @@ bool AEntropyGameModeBase::CheckLossCondition()
 	UKismetSystemLibrary::PrintString(this, "Calling game over");
 	GameOver();
 	return true;
+}
+ENTColor AEntropyGameModeBase::GetColorForPlayer(int PlayerID) const
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, PlayerID);
+	if (PC == nullptr) return ENTColor::NONE;
+
+	if (UENTLocalPlayer* LocalPlayer = Cast<UENTLocalPlayer>(PC->GetLocalPlayer()))
+	{
+		return LocalPlayer->PlayerColor;
+	}
+	return ENTColor::NONE;
+}
+
+ENTCharacterClass AEntropyGameModeBase::GetCharacterClassForPlayer(int PlayerID) const
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, PlayerID);
+	if (PC == nullptr) return ENTCharacterClass::NONE;
+
+	if (UENTLocalPlayer* LocalPlayer = Cast<UENTLocalPlayer>(PC->GetLocalPlayer()))
+	{
+		return LocalPlayer->PlayerClass;
+	}
+	return ENTCharacterClass::NONE;
+}
+
+UPaperSprite* AEntropyGameModeBase::GetSpriteForPlayer(int PlayerID) const
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, PlayerID);
+	if (PC == nullptr) return nullptr;
+
+	if (UENTLocalPlayer* LocalPlayer = Cast<UENTLocalPlayer>(PC->GetLocalPlayer()))
+	{
+		if (CharacterDataTable)
+		{
+			FName ClassName = EnumToFName("ENTCharacterClass", LocalPlayer->PlayerClass);
+			FCharacterSpriteData* Row = CharacterDataTable->FindRow<FCharacterSpriteData>(ClassName, TEXT(""));
+
+			if (LocalPlayer->PlayerColor == ENTColor::Blue)
+				return Row->BlueSprite;
+			else if (LocalPlayer->PlayerColor == ENTColor::Red)
+				return Row->RedSprite;
+			else if (LocalPlayer->PlayerColor == ENTColor::Green)
+				return Row->GreenSprite;
+			else
+				return Row->PinkSprite;
+		}
+	}
+	return nullptr;
 }
 
 void AEntropyGameModeBase::GameOver()

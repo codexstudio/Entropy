@@ -90,6 +90,11 @@ AENTCharacter::AENTCharacter()
 	PickupSoundCue = PickupCue.Object;
 }
 
+void AENTCharacter::SetSprite(UPaperSprite* Sprite)
+{
+	SpriteComponent->SetSprite(Sprite);
+}
+
 void AENTCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();

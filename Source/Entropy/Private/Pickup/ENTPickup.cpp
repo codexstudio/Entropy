@@ -56,7 +56,7 @@ void AENTPickup::SetPickupClass(ENTCharacterClass ENTClass)
 		FPickupSpriteData* row = DataTable->FindRow<FPickupSpriteData>(className, TEXT(""));
 		if (row) 
 		{
-			SpriteComponent->SetSprite(row->PaperSprite);
+			SpriteComponent->SetSprite(row->BlueSprite);
 		}
 	}
 }
